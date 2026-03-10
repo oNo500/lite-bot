@@ -13,6 +13,10 @@ export const appPaths = {
       getHref: (redirectTo?: string | null) =>
         `/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
     },
+    guest: {
+      getHref: (redirectUrl?: string | null) =>
+        `/api/auth/guest${redirectUrl ? `?redirectUrl=${encodeURIComponent(redirectUrl)}` : ''}`,
+    },
   },
   legal: {
     terms: { href: '/terms' },
