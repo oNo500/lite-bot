@@ -18,4 +18,7 @@ export const appPaths = {
     terms: { href: '/terms' },
     privacy: { href: '/privacy' },
   },
+  chat: {
+    index: { href: '/chat' },
+  },
 }
