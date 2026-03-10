@@ -1,0 +1,34 @@
+{
+  "name": "boilerplate",
+  "type": "module",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "typecheck": "turbo run typecheck",
+    "up:all": "taze"
+  },
+  "devDependencies": {
+    "taze": "^19.10.0",
+    "turbo": "^2.8.12"
+  },
+  "packageManager": "pnpm@10.30.3",
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowAny": [
+        "antd",
+        "openapi-fetch",
+        "storybook"
+      ]
+    },
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@scarf/scarf",
+      "bcrypt",
+      "better-sqlite3",
+      "@swc/core",
+      "esbuild"
+    ]
+  }
+}
