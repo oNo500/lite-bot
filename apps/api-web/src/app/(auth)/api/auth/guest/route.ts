@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const redirectUrl = searchParams.get('redirectUrl') || '/'
+  const redirectUrl = searchParams.get('redirectUrl') ?? '/'
 
   const session = await auth.api.getSession({ headers: request.headers })
 

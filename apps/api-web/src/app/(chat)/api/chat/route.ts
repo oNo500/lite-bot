@@ -21,7 +21,7 @@ const model
 
 const bodySchema = z.object({
   messages: z.array(z.custom<UIMessage>()),
-  chatId: z.string().uuid().optional(),
+  chatId: z.string().uuid({ message: 'Invalid chat ID' }).optional(),
 })
 
 export async function POST(req: Request) {
