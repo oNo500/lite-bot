@@ -1,5 +1,7 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { nextCookies } from 'better-auth/next-js'
+import { anonymous } from 'better-auth/plugins'
 
 import { env } from '@/config/env'
 import { db } from '@/db'
@@ -19,4 +21,5 @@ export const auth = betterAuth({
       clientSecret: env.GITHUB_CLIENT_SECRET,
     },
   },
+  plugins: [anonymous(), nextCookies()],
 })
