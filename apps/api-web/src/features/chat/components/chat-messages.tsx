@@ -25,9 +25,9 @@ export function ChatMessages({ messages }: { messages: UIMessage[] }) {
                 : 'bg-muted text-foreground'
             }`}
           >
-            {message.parts.map((part) => {
+            {message.parts.map((part, index) => {
               if (part.type === 'text') {
-                return <span key={part.text}>{part.text}</span>
+                return <span key={index}>{part.text}</span>
               }
               return null
             })}

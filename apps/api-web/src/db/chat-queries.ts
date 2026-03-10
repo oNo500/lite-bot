@@ -10,8 +10,8 @@ export type Chat = InferSelectModel<typeof chat>
 export type ChatMessage = InferSelectModel<typeof chatMessage>
 export type NewChatMessage = InferInsertModel<typeof chatMessage>
 
-export async function createChat(userId: string, title: string): Promise<Chat> {
-  const [created] = await db.insert(chat).values({ userId, title }).returning()
+export async function createChat(userId: string, title: string, id?: string): Promise<Chat> {
+  const [created] = await db.insert(chat).values({ ...(id ? { id } : {}), userId, title }).returning()
   if (!created) throw new Error('Failed to create chat')
   return created
 }

@@ -53,8 +53,13 @@ export async function POST(req: Request) {
 
   if (chatId) {
     const existing = await getChatById(chatId)
-    if (existing?.userId !== session.user.id) {
-      return new ChatError('Forbidden', 403).toResponse()
+    if (existing) {
+      if (existing.userId !== session.user.id) {
+        return new ChatError('Forbidden', 403).toResponse()
+      }
+    } else {
+      await createChat(session.user.id, 'New Chat', chatId)
+      isNewChat = true
     }
   } else {
     const newChat = await createChat(session.user.id, 'New Chat')
@@ -103,11 +108,5 @@ export async function POST(req: Request) {
     },
   })
 
-  const newHeaders = new Headers(response.headers)
-  newHeaders.set('X-Chat-Id', chatId)
-
-  return new Response(response.body, {
-    status: response.status,
-    headers: newHeaders,
-  })
+  return response
 }
