@@ -18,7 +18,7 @@ export function AppSidebarHeader() {
               <Logo />
               <span className="font-semibold text-sm">Lite Bot</span>
             </div>
-            <Button variant="ghost" size="icon" render={<Link href={appPaths.chat.index.href} aria-label="New chat" />}>
+            <Button variant="ghost" size="icon" nativeButton={false} render={<Link href={appPaths.chat.index.href} aria-label="New chat" />}>
               <PlusIcon className="size-4" />
             </Button>
           </div>
