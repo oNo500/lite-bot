@@ -15,7 +15,7 @@ import {
 } from '@workspace/ui/components/sidebar'
 import { DefaultChatTransport } from 'ai'
 import { useRouter } from 'next/navigation'
-import { useMemo, useRef } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { appPaths } from '@/config/app-paths'
 
@@ -33,23 +33,23 @@ interface ChatPageProps {
 
 export function ChatPage({ sidebar, chatId, initialMessages }: ChatPageProps) {
   const router = useRouter()
-  const hasRedirected = useRef(false)
 
-  const transport = useMemo(() => new DefaultChatTransport({
-    api: '/api/chat',
-    fetch: async (url, init) => {
-      const response = await fetch(url, init)
-      // 新对话：服务端返回 X-Chat-Id，乐观跳转到 /chat/[id]
-      if (!chatId && !hasRedirected.current) {
-        const newChatId = response.headers.get('X-Chat-Id')
-        if (newChatId) {
-          hasRedirected.current = true
-          router.replace(appPaths.chat.detail.href(newChatId))
-        }
+  const customFetch = useCallback(async (url: RequestInfo | URL, init?: RequestInit) => {
+    const response = await fetch(url, init)
+    // 仅新对话（无 chatId）时跳转，跳转后组件被 /chat/[id] 替换，天然只执行一次
+    if (!chatId) {
+      const newChatId = response.headers.get('X-Chat-Id')
+      if (newChatId) {
+        router.replace(appPaths.chat.detail.href(newChatId))
       }
-      return response
-    },
-  }), [chatId, router])
+    }
+    return response
+  }, [chatId, router])
+
+  const transport = useMemo(
+    () => new DefaultChatTransport({ api: '/api/chat', fetch: customFetch }),
+    [customFetch],
+  )
 
   const { messages, sendMessage, status } = useChat({
     id: chatId,
