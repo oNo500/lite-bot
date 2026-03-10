@@ -83,7 +83,7 @@ export const chat = pgTable('chat', {
 })
 
 export const chatMessage = pgTable('chat_message', {
-  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  id: uuid('id').primaryKey().notNull(),
   chatId: uuid('chat_id').notNull().references(() => chat.id, { onDelete: 'cascade' }),
   role: varchar('role').notNull(),
   parts: json('parts').notNull(),
