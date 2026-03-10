@@ -16,6 +16,9 @@ export default function Chat() {
               case 'text': {
                 return <div key={`${message.id}-${i}`}>{part.text}</div>
               }
+              default: {
+                return null
+              }
             }
           })}
         </div>

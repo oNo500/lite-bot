@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm'
-import { pgTable, text, timestamp, boolean, index } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean, index, uuid, varchar, json } from 'drizzle-orm/pg-core'
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -74,9 +74,27 @@ export const verification = pgTable(
   (table) => [index('verification_identifier_idx').on(table.identifier)],
 )
 
+export const chat = pgTable('chat', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  title: text('title').notNull(),
+  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  visibility: varchar('visibility', { enum: ['public', 'private'] }).notNull().default('private'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+export const chatMessage = pgTable('chat_message', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  chatId: uuid('chat_id').notNull().references(() => chat.id, { onDelete: 'cascade' }),
+  role: varchar('role').notNull(),
+  parts: json('parts').notNull(),
+  attachments: json('attachments').notNull().default([]),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  chats: many(chat),
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -90,5 +108,20 @@ export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
     references: [user.id],
+  }),
+}))
+
+export const chatRelations = relations(chat, ({ one, many }) => ({
+  user: one(user, {
+    fields: [chat.userId],
+    references: [user.id],
+  }),
+  messages: many(chatMessage),
+}))
+
+export const chatMessageRelations = relations(chatMessage, ({ one }) => ({
+  chat: one(chat, {
+    fields: [chatMessage.chatId],
+    references: [chat.id],
   }),
 }))
