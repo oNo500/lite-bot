@@ -24,5 +24,6 @@ export const appPaths = {
   },
   chat: {
     index: { href: '/chat' },
+    detail: { href: (id: string) => `/chat/${id}` },
   },
 }
