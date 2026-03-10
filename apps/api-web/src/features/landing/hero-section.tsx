@@ -14,7 +14,7 @@ export function HeroSection() {
           A clean foundation. No noise, no bloat.
         </p>
         <div className="flex items-center justify-center gap-3">
-          <Button render={<Link href={appPaths.auth.signup.getHref()} />} nativeButton={false} size="lg">
+          <Button render={<Link href={appPaths.chat.index.href} />} nativeButton={false} size="lg">
             Get Started
           </Button>
           <Button render={<Link href={appPaths.auth.login.getHref()} />} nativeButton={false} variant="outline" size="lg">
