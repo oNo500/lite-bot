@@ -10,7 +10,10 @@ import {
   SidebarMenuItem,
 } from '@workspace/ui/components/sidebar'
 import { MessageSquareIcon } from 'lucide-react'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+
+import { appPaths } from '@/config/app-paths'
 
 import type { Chat } from '@/db/chat-queries'
 
@@ -38,8 +41,8 @@ export function ChatHistory({ chats }: { chats: Chat[] }) {
             {chats.map((chat) => (
               <SidebarMenuItem key={chat.id}>
                 <SidebarMenuButton
-                  isActive={pathname === `/chat/${chat.id}`}
-                  render={<a href={`/chat/${chat.id}`} />}
+                  isActive={pathname === appPaths.chat.detail.href(chat.id)}
+                  render={<Link href={appPaths.chat.detail.href(chat.id)} />}
                 >
                   <MessageSquareIcon />
                   <span className="truncate">{chat.title}</span>
