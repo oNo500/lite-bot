@@ -14,8 +14,7 @@ import {
   SidebarTrigger,
 } from '@workspace/ui/components/sidebar'
 import { DefaultChatTransport } from 'ai'
-import { useRouter } from 'next/navigation'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { appPaths } from '@/config/app-paths'
 
@@ -27,34 +26,32 @@ import type { ReactNode } from 'react'
 
 interface ChatPageProps {
   sidebar: ReactNode
-  chatId?: string
+  chatId: string
   initialMessages?: UIMessage[]
 }
 
 export function ChatPage({ sidebar, chatId, initialMessages }: ChatPageProps) {
-  const router = useRouter()
-
-  const customFetch = useCallback(async (url: RequestInfo | URL, init?: RequestInit) => {
-    const response = await fetch(url, init)
-    // 仅新对话（无 chatId）时跳转，跳转后组件被 /chat/[id] 替换，天然只执行一次
-    if (!chatId) {
-      const newChatId = response.headers.get('X-Chat-Id')
-      if (newChatId) {
-        router.replace(appPaths.chat.detail.href(newChatId))
-      }
-    }
-    return response
-  }, [chatId, router])
+  const isNewChat = !initialMessages?.length
 
   const transport = useMemo(
-    () => new DefaultChatTransport({ api: '/api/chat', fetch: customFetch }),
-    [customFetch],
+    () => new DefaultChatTransport({
+      api: '/api/chat',
+      prepareSendMessagesRequest: ({ id, messages }) => ({
+        body: { chatId: id, messages },
+      }),
+    }),
+    [],
   )
 
   const { messages, sendMessage, status } = useChat({
     id: chatId,
     messages: initialMessages,
     transport,
+    onFinish: () => {
+      if (isNewChat) {
+        globalThis.history.replaceState(null, '', appPaths.chat.detail.href(chatId))
+      }
+    },
   })
 
   function handleSend(text: string) {

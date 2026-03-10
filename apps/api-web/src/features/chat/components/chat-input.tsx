@@ -26,6 +26,7 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
   return (
     <form onSubmit={handleSubmit} className="flex gap-2 p-4 border-t">
       <Input
+        id="chat-input"
         value={value}
         onChange={(e) => setValue(e.currentTarget.value)}
         placeholder="Send a message..."
