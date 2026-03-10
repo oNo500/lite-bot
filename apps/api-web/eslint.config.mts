@@ -5,7 +5,7 @@ import type { Linter } from "eslint";
 import { defineConfig } from "eslint/config";
 
 const appConfig : Linter.Config[] = defineConfig({
-  // ignores:GLOB_TESTS,
+  ignores: ['.agents/**'],
   extends: composeConfig({
       typescript: { tsconfigRootDir: import.meta.dirname },
       imports: {
