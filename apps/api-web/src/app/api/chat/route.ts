@@ -1,5 +1,6 @@
 import { createDeepSeek } from '@ai-sdk/deepseek'
-import { streamText, convertToModelMessages } from 'ai'
+import { devToolsMiddleware } from '@ai-sdk/devtools'
+import { streamText, convertToModelMessages, wrapLanguageModel } from 'ai'
 import { z } from 'zod'
 
 import { env } from '@/config/env'
@@ -7,6 +8,13 @@ import { env } from '@/config/env'
 import type { UIMessage } from 'ai'
 
 const deepseek = createDeepSeek({ apiKey: env.DEEPSEEK_API_KEY })
+
+const baseModel = deepseek('deepseek-chat')
+
+const model
+  = process.env.NODE_ENV === 'development'
+    ? wrapLanguageModel({ model: baseModel, middleware: devToolsMiddleware() })
+    : baseModel
 
 const bodySchema = z.object({
   messages: z.array(z.custom<UIMessage>()),
@@ -18,7 +26,7 @@ export async function POST(req: Request) {
   const { messages } = parsed.data
 
   const result = streamText({
-    model: deepseek('deepseek-chat'),
+    model,
     messages: await convertToModelMessages(messages),
   })
 

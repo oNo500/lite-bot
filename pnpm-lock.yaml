@@ -20,6 +20,9 @@ importers:
       '@ai-sdk/deepseek':
         specifier: ^2.0.24
         version: 2.0.24(zod@4.3.6)
+      '@ai-sdk/devtools':
+        specifier: ^0.0.15
+        version: 0.0.15
       '@ai-sdk/react':
         specifier: ^3.0.118
         version: 3.0.118(react@19.2.4)(zod@4.3.6)
@@ -486,6 +489,10 @@ packages:
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/devtools@0.0.15':
+    resolution: {integrity: sha512-zRF+ClRh0fcmvoKclOcmy2hmTDN48ZfHD3y1fC3Lx0vIYaX55uywssiyaA18WlV2mD+N9H4fgPxq+9JeGfMGlQ==}
+    hasBin: true
 
   '@ai-sdk/gateway@3.0.66':
     resolution: {integrity: sha512-SIQ0YY0iMuv+07HLsZ+bB990zUJ6S4ujORAh+Jv1V2KGNn73qQKnGO0JBk+w+Res8YqOFSycwDoWcFlQrVxS4A==}
@@ -6961,6 +6968,12 @@ snapshots:
       '@ai-sdk/provider': 3.0.8
       '@ai-sdk/provider-utils': 4.0.19(zod@4.3.6)
       zod: 4.3.6
+
+  '@ai-sdk/devtools@0.0.15':
+    dependencies:
+      '@ai-sdk/provider': 3.0.8
+      '@hono/node-server': 1.19.9(hono@4.12.3)
+      hono: 4.12.3
 
   '@ai-sdk/gateway@3.0.66(zod@4.3.6)':
     dependencies:
