@@ -13,6 +13,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@workspace/ui/components/sidebar'
+import { cn } from '@workspace/ui/lib/utils'
 import { DefaultChatTransport } from 'ai'
 import { useMemo } from 'react'
 
@@ -59,7 +60,7 @@ export function ChatPage({ sidebar, chatId, initialMessages }: ChatPageProps) {
   }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       {sidebar}
       <SidebarInset>
         <header className="flex h-14 shrink-0 items-center gap-2 px-3">
@@ -73,7 +74,11 @@ export function ChatPage({ sidebar, chatId, initialMessages }: ChatPageProps) {
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-        <div className="flex flex-col flex-1 overflow-hidden">
+        <div className={cn(
+          'flex flex-col flex-1 overflow-hidden',
+          messages.length === 0 && 'items-center justify-center',
+        )}
+        >
           <ChatMessages messages={messages} />
           <ChatInput onSend={handleSend} onStop={stop} status={status} />
         </div>
