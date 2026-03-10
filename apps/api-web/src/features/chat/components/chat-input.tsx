@@ -1,41 +1,38 @@
 'use client'
 
-import { Button } from '@workspace/ui/components/button'
-import { Input } from '@workspace/ui/components/input'
-import { useState } from 'react'
+import {
+  PromptInput,
+  PromptInputBody,
+  PromptInputFooter,
+  PromptInputSubmit,
+  PromptInputTextarea,
+
+} from '@/components/ai-elements/prompt-input'
+
+import type { PromptInputMessage } from '@/components/ai-elements/prompt-input'
+import type { ChatStatus } from 'ai'
 
 interface ChatInputProps {
   onSend: (text: string) => void
-  isLoading?: boolean
+  onStop?: () => void
+  status?: ChatStatus
 }
 
-export function ChatInput({ onSend, isLoading }: ChatInputProps) {
-  const [value, setValue] = useState('')
-
-  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const text = value.trim()
+export function ChatInput({ onSend, onStop, status }: ChatInputProps) {
+  function handleSubmit(message: PromptInputMessage) {
+    const text = message.text?.trim() ?? ''
     if (!text) return
-    if (isLoading) return
     onSend(text)
-    setValue('')
   }
 
-  const isDisabled = isLoading === true || !value.trim()
-
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 p-4 border-t">
-      <Input
-        id="chat-input"
-        value={value}
-        onChange={(e) => setValue(e.currentTarget.value)}
-        placeholder="Send a message..."
-        disabled={isLoading}
-        className="flex-1"
-      />
-      <Button type="submit" disabled={isDisabled}>
-        Send
-      </Button>
-    </form>
+    <PromptInput onSubmit={handleSubmit} className="border-t rounded-none">
+      <PromptInputBody>
+        <PromptInputTextarea placeholder="Send a message..." />
+      </PromptInputBody>
+      <PromptInputFooter className="justify-end">
+        <PromptInputSubmit status={status} onStop={onStop} />
+      </PromptInputFooter>
+    </PromptInput>
   )
 }

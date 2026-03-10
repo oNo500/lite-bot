@@ -43,7 +43,7 @@ export function ChatPage({ sidebar, chatId, initialMessages }: ChatPageProps) {
     [],
   )
 
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, stop, status } = useChat({
     id: chatId,
     messages: initialMessages,
     transport,
@@ -75,7 +75,7 @@ export function ChatPage({ sidebar, chatId, initialMessages }: ChatPageProps) {
         </header>
         <div className="flex flex-col flex-1 overflow-hidden">
           <ChatMessages messages={messages} />
-          <ChatInput onSend={handleSend} isLoading={status === 'streaming' || status === 'submitted'} />
+          <ChatInput onSend={handleSend} onStop={stop} status={status} />
         </div>
       </SidebarInset>
     </SidebarProvider>
