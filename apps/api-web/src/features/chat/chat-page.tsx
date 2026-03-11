@@ -32,6 +32,7 @@ interface ChatPageProps {
   sidebar: ReactNode
   chatId: string
   initialMessages?: UIMessage[]
+  sidebarDefaultOpen?: boolean
 }
 
 function ChatLayout({ messages, onSend, onStop, status }: {
@@ -96,7 +97,7 @@ function ChatLayout({ messages, onSend, onStop, status }: {
   )
 }
 
-function ChatPageInner({ sidebar, chatId, initialMessages }: ChatPageProps) {
+function ChatPageInner({ sidebar, chatId, initialMessages, sidebarDefaultOpen = false }: ChatPageProps) {
   const isNewChat = !initialMessages?.length
   const dispatch = useStreamEventDispatch()
   useChatTitleHandler()
@@ -129,17 +130,17 @@ function ChatPageInner({ sidebar, chatId, initialMessages }: ChatPageProps) {
   }
 
   return (
-    <SidebarProvider defaultOpen={false}>
+    <SidebarProvider defaultOpen={sidebarDefaultOpen}>
       {sidebar}
       <ChatLayout messages={messages} onSend={handleSend} onStop={stop} status={status} />
     </SidebarProvider>
   )
 }
 
-export function ChatPage({ sidebar, chatId, initialMessages }: ChatPageProps) {
+export function ChatPage({ sidebar, chatId, initialMessages, sidebarDefaultOpen }: ChatPageProps) {
   return (
     <StreamEventProvider>
-      <ChatPageInner sidebar={sidebar} chatId={chatId} initialMessages={initialMessages} />
+      <ChatPageInner sidebar={sidebar} chatId={chatId} initialMessages={initialMessages} sidebarDefaultOpen={sidebarDefaultOpen} />
     </StreamEventProvider>
   )
 }

@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers'
 import { notFound } from 'next/navigation'
 
 import { getMessagesByChatId, getChatById } from '@/db/chat-queries'
@@ -22,13 +23,18 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
   if (!chat) notFound()
 
-  const messages = await getMessagesByChatId(id)
+  const [messages, cookieStore] = await Promise.all([
+    getMessagesByChatId(id),
+    cookies(),
+  ])
+  const sidebarDefaultOpen = cookieStore.get('sidebar_state')?.value === 'true'
 
   return (
     <ChatPage
       sidebar={<AppSidebar />}
       chatId={id}
       initialMessages={toUIMessages(messages)}
+      sidebarDefaultOpen={sidebarDefaultOpen}
     />
   )
 }

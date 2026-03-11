@@ -14,6 +14,8 @@ import {
 
 import type { UIMessage } from 'ai'
 
+import 'streamdown/styles.css'
+
 export function ChatMessages({ messages }: { messages: UIMessage[] }) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
