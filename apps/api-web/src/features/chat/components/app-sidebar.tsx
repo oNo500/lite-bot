@@ -9,6 +9,7 @@ import {
 } from '@workspace/ui/components/sidebar'
 import { PlusIcon } from 'lucide-react'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
 import { appPaths } from '@/config/app-paths'
 
@@ -32,7 +33,9 @@ export function AppSidebar() {
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
-      <ChatHistory />
+      <Suspense>
+        <ChatHistory />
+      </Suspense>
       <NavSecondary className="mt-auto" />
       <SidebarRail />
     </Sidebar>
