@@ -6,7 +6,7 @@ import { getChatsByUserIdPaginated, deleteChat } from '@/db/chat-queries'
 import { auth } from '@/lib/auth'
 
 const deleteChatSchema = z.object({
-  chatId: z.string().uuid(),
+  chatId: z.uuid(),
 })
 
 export async function GET(req: Request) {
@@ -30,7 +30,7 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const body = await req.json()
+  const body: unknown = await req.json()
   const parsed = deleteChatSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid chatId' }, { status: 400 })

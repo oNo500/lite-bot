@@ -70,7 +70,7 @@ describe('gET /api/history', () => {
     mockGetChats.mockResolvedValue(chats)
     const req = makeRequest('/api/history')
     const res = await GET(req)
-    const body = await res.json()
+    const body = await res.json() as { hasMore: boolean }
     expect(body.hasMore).toBe(true)
   })
 
@@ -81,7 +81,7 @@ describe('gET /api/history', () => {
     ])
     const req = makeRequest('/api/history')
     const res = await GET(req)
-    const body = await res.json()
+    const body = await res.json() as { hasMore: boolean }
     expect(body.hasMore).toBe(false)
   })
 })

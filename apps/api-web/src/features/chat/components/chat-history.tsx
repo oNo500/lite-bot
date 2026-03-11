@@ -30,7 +30,7 @@ async function fetchHistory(endingBefore?: string): Promise<HistoryPage> {
   if (endingBefore) url.searchParams.set('ending_before', endingBefore)
   const res = await fetch(url.toString())
   if (!res.ok) throw new Error('Failed to fetch history')
-  return res.json()
+  return res.json() as Promise<HistoryPage>
 }
 
 export function ChatHistory() {
@@ -50,7 +50,7 @@ export function ChatHistory() {
 
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
+      void fetchNextPage()
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
 
@@ -72,8 +72,8 @@ export function ChatHistory() {
           <SidebarGroupLabel>History</SidebarGroupLabel>
           <SidebarGroupContent>
             <div className="flex flex-col gap-1 px-2">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-8 w-full rounded-md" />
+              {['s1', 's2', 's3', 's4', 's5'].map((k) => (
+                <Skeleton key={k} className="h-8 w-full rounded-md" />
               ))}
             </div>
           </SidebarGroupContent>
@@ -131,8 +131,8 @@ export function ChatHistory() {
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupContent>
             <div className="flex flex-col gap-1 px-2">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-8 w-full rounded-md" />
+              {['p1', 'p2', 'p3'].map((k) => (
+                <Skeleton key={k} className="h-8 w-full rounded-md" />
               ))}
             </div>
           </SidebarGroupContent>
