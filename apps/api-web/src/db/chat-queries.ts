@@ -34,21 +34,19 @@ export async function getChatById(chatId: string): Promise<Chat | undefined> {
   return found
 }
 
-export async function getOrCreateChat(
-  userId: string,
-  chatId: string,
-): Promise<{ chat: Chat, created: boolean }> {
+// 原子性确保 chat 存在，返回是否为新建
+export async function ensureChat(userId: string, chatId: string): Promise<{ isNew: boolean, userId: string }> {
   const [inserted] = await db
     .insert(chat)
     .values({ id: chatId, userId, title: 'New Chat' })
     .onConflictDoNothing()
     .returning()
 
-  if (inserted) return { chat: inserted, created: true }
+  if (inserted) return { isNew: true, userId: inserted.userId }
 
   const [existing] = await db.select().from(chat).where(eq(chat.id, chatId))
   if (!existing) throw new Error('Chat not found after upsert')
-  return { chat: existing, created: false }
+  return { isNew: false, userId: existing.userId }
 }
 
 export async function updateChatTitle(chatId: string, title: string): Promise<void> {

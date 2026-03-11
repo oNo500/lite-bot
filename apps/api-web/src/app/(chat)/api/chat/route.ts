@@ -4,7 +4,7 @@ import { headers } from 'next/headers'
 import { after } from 'next/server'
 import { z } from 'zod'
 
-import { createChat, getOrCreateChat, saveMessages } from '@/db/chat-queries'
+import { ensureChat, saveMessages } from '@/db/chat-queries'
 import { generateChatTitle } from '@/features/chat/actions'
 import { model } from '@/lib/ai/provider'
 import { auth } from '@/lib/auth'
@@ -15,7 +15,7 @@ import type { UIMessage } from 'ai'
 
 const bodySchema = z.object({
   messages: z.array(z.custom<UIMessage>()),
-  chatId: z.uuid().optional(),
+  chatId: z.uuid(),
 })
 
 export async function POST(req: Request) {
@@ -38,20 +38,12 @@ export async function POST(req: Request) {
   const parsed = bodySchema.safeParse(await req.json())
   if (!parsed.success) return new ChatError('Bad Request', 400).toResponse()
 
-  const { messages, chatId: incomingChatId } = parsed.data
-  let chatId = incomingChatId
-  let isNewChat = false
+  const { messages, chatId } = parsed.data
+  if (!chatId) return new ChatError('Bad Request', 400).toResponse()
 
-  if (chatId) {
-    const { chat: existingOrNew, created } = await getOrCreateChat(session.user.id, chatId)
-    if (!created && existingOrNew.userId !== session.user.id) {
-      return new ChatError('Forbidden', 403).toResponse()
-    }
-    isNewChat = created
-  } else {
-    const newChat = await createChat(session.user.id, 'New Chat')
-    chatId = newChat.id
-    isNewChat = true
+  const { isNew, userId: chatOwnerId } = await ensureChat(session.user.id, chatId)
+  if (!isNew && chatOwnerId !== session.user.id) {
+    return new ChatError('Forbidden', 403).toResponse()
   }
 
   const lastUserMessage = messages.toReversed().find((m) => m.role === 'user')
@@ -82,7 +74,7 @@ export async function POST(req: Request) {
         attachments: [],
       }])
 
-      if (isNewChat) {
+      if (isNew) {
         const lastUserMsg = messages.toReversed().find((m) => m.role === 'user')
         const firstTextPart = lastUserMsg?.parts.find((p) => p.type === 'text')
         const text
