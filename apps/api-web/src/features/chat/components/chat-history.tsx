@@ -9,7 +9,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@workspace/ui/components/sidebar'
-import { MessageSquareIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -34,17 +33,16 @@ export function ChatHistory({ chats }: { chats: Chat[] }) {
 
   return (
     <SidebarContent>
-      <SidebarGroup>
-        <SidebarGroupLabel>Chats</SidebarGroupLabel>
+      <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+        <SidebarGroupLabel>Recents</SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
-            {chats.map((chat) => (
+            {chats.toReversed().map((chat) => (
               <SidebarMenuItem key={chat.id}>
                 <SidebarMenuButton
                   isActive={pathname === appPaths.chat.detail.href(chat.id)}
                   render={<Link href={appPaths.chat.detail.href(chat.id)} />}
                 >
-                  <MessageSquareIcon />
                   <span className="truncate">{chat.title}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>

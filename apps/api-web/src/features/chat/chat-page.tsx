@@ -7,14 +7,11 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from '@workspace/ui/components/breadcrumb'
-import { Separator } from '@workspace/ui/components/separator'
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
   useSidebar,
 } from '@workspace/ui/components/sidebar'
-import { cn } from '@workspace/ui/lib/utils'
 import { DefaultChatTransport } from 'ai'
 import { useMemo } from 'react'
 
@@ -39,7 +36,11 @@ function ChatLayout({ messages, onSend, onStop, status }: {
   status: ReturnType<typeof useChat>['status']
 }) {
   const { state, isMobile } = useSidebar()
-  const sidebarLeft = (!isMobile && state === 'expanded') ? 'var(--sidebar-width)' : '0px'
+  const sidebarLeft = isMobile
+    ? '0px'
+    : (state === 'expanded'
+        ? 'var(--sidebar-width)'
+        : 'var(--sidebar-width-icon)')
 
   return (
     <SidebarInset>
@@ -47,8 +48,6 @@ function ChatLayout({ messages, onSend, onStop, status }: {
         className="fixed top-0 right-0 z-[9] flex h-14 items-center gap-2 bg-background pr-3 transition-[left] duration-200 ease-linear"
         style={{ left: sidebarLeft }}
       >
-        <SidebarTrigger />
-        <Separator orientation="vertical" className="mr-2 data-vertical:h-4 data-vertical:self-auto" />
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -68,7 +67,7 @@ function ChatLayout({ messages, onSend, onStop, status }: {
         : (
             <>
               <div className="min-h-svh pt-14 pb-36">
-                <div className="mx-auto w-full max-w-[760px]">
+                <div className="mx-auto w-full max-w-190">
                   <ChatMessages messages={messages} />
                 </div>
               </div>
@@ -76,7 +75,7 @@ function ChatLayout({ messages, onSend, onStop, status }: {
                 className="fixed right-0 bottom-0 z-[9] flex justify-center bg-background transition-[left] duration-200 ease-linear"
                 style={{ left: sidebarLeft }}
               >
-                <div className="w-full max-w-[760px]">
+                <div className="w-full max-w-190">
                   <ChatInput onSend={onSend} onStop={onStop} status={status} />
                 </div>
               </div>
