@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @source "../../../apps/**/*.{ts,tsx}";
-@source "../../../apps/api-web/node_modules/streamdown/dist/**/*.js";
+
 @source "../../../components/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
 
