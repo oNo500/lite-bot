@@ -26,4 +26,9 @@ export const appPaths = {
     index: { href: '/chat' },
     detail: { href: (id: string) => `/chat/${id}` },
   },
+  api: {
+    files: {
+      upload: { href: '/api/files/upload' },
+    },
+  },
 }
