@@ -15,11 +15,15 @@ import {
 import { DefaultChatTransport } from 'ai'
 import { useMemo } from 'react'
 
+import { StreamEventProvider, useStreamEventDispatch } from '@/components/stream-event-provider'
 import { appPaths } from '@/config/app-paths'
+import { useChatTitleHandler } from '@/lib/ai/stream-event-handlers'
+import { appDataPartSchemas } from '@/lib/ai/stream-events'
 
 import { ChatInput } from './components/chat-input'
 import { ChatMessages } from './components/chat-messages'
 
+import type { AppUIMessage } from '@/lib/ai/stream-events'
 import type { FileUIPart, TextUIPart, UIMessage } from 'ai'
 import type { ReactNode } from 'react'
 
@@ -90,8 +94,10 @@ function ChatLayout({ messages, onSend, onStop, status }: {
   )
 }
 
-export function ChatPage({ sidebar, chatId, initialMessages }: ChatPageProps) {
+function ChatPageInner({ sidebar, chatId, initialMessages }: ChatPageProps) {
   const isNewChat = !initialMessages?.length
+  const dispatch = useStreamEventDispatch()
+  useChatTitleHandler()
 
   const transport = useMemo(
     () => new DefaultChatTransport({
@@ -103,10 +109,12 @@ export function ChatPage({ sidebar, chatId, initialMessages }: ChatPageProps) {
     [],
   )
 
-  const { messages, sendMessage, stop, status } = useChat({
+  const { messages, sendMessage, stop, status } = useChat<AppUIMessage>({
     id: chatId,
-    messages: initialMessages,
+    messages: initialMessages as AppUIMessage[] | undefined,
     transport,
+    dataPartSchemas: appDataPartSchemas,
+    onData: dispatch,
     onFinish: () => {
       if (isNewChat) {
         globalThis.history.replaceState(null, '', appPaths.chat.detail.href(chatId))
@@ -123,5 +131,13 @@ export function ChatPage({ sidebar, chatId, initialMessages }: ChatPageProps) {
       {sidebar}
       <ChatLayout messages={messages} onSend={handleSend} onStop={stop} status={status} />
     </SidebarProvider>
+  )
+}
+
+export function ChatPage({ sidebar, chatId, initialMessages }: ChatPageProps) {
+  return (
+    <StreamEventProvider>
+      <ChatPageInner sidebar={sidebar} chatId={chatId} initialMessages={initialMessages} />
+    </StreamEventProvider>
   )
 }

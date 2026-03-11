@@ -1,16 +1,23 @@
-import { createIdGenerator, convertToModelMessages, streamText } from 'ai'
+import {
+  convertToModelMessages,
+  createIdGenerator,
+  createUIMessageStream,
+  createUIMessageStreamResponse,
+  streamText,
+} from 'ai'
 import { checkBotId } from 'botid/server'
 import { headers } from 'next/headers'
-import { after } from 'next/server'
 import { z } from 'zod'
 
 import { ensureChat, saveMessages } from '@/db/chat-queries'
 import { generateChatTitle } from '@/features/chat/actions'
 import { model } from '@/lib/ai/provider'
+import { createEventWriter } from '@/lib/ai/stream-events'
 import { auth } from '@/lib/auth'
 import { ChatError } from '@/lib/errors'
 import { checkRateLimit } from '@/lib/ratelimit'
 
+import type { AppUIMessage } from '@/lib/ai/stream-events'
 import type { UIMessage } from 'ai'
 
 const filePartSchema = z.object({
@@ -76,35 +83,40 @@ export async function POST(req: Request) {
     }])
   }
 
-  const result = streamText({
-    model,
-    messages: await convertToModelMessages(messages),
-  })
+  const lastUserMsg = messages.toReversed().find((m) => m.role === 'user')
+  const firstTextPart = lastUserMsg?.parts.find((p) => p.type === 'text')
+  const text = firstTextPart && 'text' in firstTextPart ? String(firstTextPart.text) : ''
+  const userMsgCount = messages.filter((m) => m.role === 'user').length
 
-  const response = result.toUIMessageStreamResponse({
-    originalMessages: messages,
-    generateMessageId: createIdGenerator({ prefix: 'msg', size: 16 }),
+  const stream = createUIMessageStream<AppUIMessage>({
+    originalMessages: messages as AppUIMessage[],
+    generateId: createIdGenerator({ prefix: 'msg', size: 16 }),
+    execute: async ({ writer }) => {
+      const events = createEventWriter(writer)
+
+      const result = streamText({
+        model,
+        messages: await convertToModelMessages(messages),
+        onFinish: async () => {
+          if (isNew && userMsgCount === 1 && text) {
+            const title = await generateChatTitle(chatId, text)
+            events.writeChatTitle(title)
+          }
+        },
+      })
+
+      writer.merge(result.toUIMessageStream())
+    },
     onFinish: async ({ responseMessage }) => {
       await saveMessages([{
         id: responseMessage.id,
-        chatId: chatId,
+        chatId,
         role: responseMessage.role,
         parts: responseMessage.parts as unknown[],
         attachments: [],
       }])
-
-      if (isNew) {
-        const lastUserMsg = messages.toReversed().find((m) => m.role === 'user')
-        const firstTextPart = lastUserMsg?.parts.find((p) => p.type === 'text')
-        const text
-          = firstTextPart && 'text' in firstTextPart ? String(firstTextPart.text) : ''
-        const userMsgCount = messages.filter((m) => m.role === 'user').length
-        if (text && userMsgCount === 1) {
-          after(generateChatTitle(chatId, text))
-        }
-      }
     },
   })
 
-  return response
+  return createUIMessageStreamResponse({ stream })
 }
