@@ -94,7 +94,12 @@ export function ChatHistory() {
     )
   }
 
-  const allChats = data.pages.flatMap((p) => p.chats)
+  const seen = new Set<string>()
+  const allChats = data.pages.flatMap((p) => p.chats).filter((c) => {
+    if (seen.has(c.id)) return false
+    seen.add(c.id)
+    return true
+  })
 
   if (allChats.length === 0) {
     return (

@@ -1,4 +1,4 @@
-import { and, eq, lt } from 'drizzle-orm'
+import { and, desc, eq, lt } from 'drizzle-orm'
 
 import { db } from '@/db'
 
@@ -65,11 +65,11 @@ export async function getChatsByUserIdPaginated(
         .select()
         .from(chat)
         .where(and(eq(chat.userId, userId), lt(chat.createdAt, cursor.createdAt)))
-        .orderBy(chat.createdAt)
+        .orderBy(desc(chat.createdAt))
         .limit(limit)
     }
   }
-  return db.select().from(chat).where(eq(chat.userId, userId)).orderBy(chat.createdAt).limit(limit)
+  return db.select().from(chat).where(eq(chat.userId, userId)).orderBy(desc(chat.createdAt)).limit(limit)
 }
 
 export async function deleteChat(chatId: string, userId: string): Promise<void> {
