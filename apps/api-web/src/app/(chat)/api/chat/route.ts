@@ -1,26 +1,17 @@
-import { createDeepSeek } from '@ai-sdk/deepseek'
-import { devToolsMiddleware } from '@ai-sdk/devtools'
-import { convertToModelMessages, streamText, wrapLanguageModel } from 'ai'
+import { convertToModelMessages, streamText } from 'ai'
 import { checkBotId } from 'botid/server'
 import { headers } from 'next/headers'
 import { after } from 'next/server'
 import { z } from 'zod'
 
-import { env } from '@/config/env'
 import { createChat, getChatById, saveMessages } from '@/db/chat-queries'
 import { generateChatTitle } from '@/features/chat/actions'
+import { model } from '@/lib/ai/provider'
 import { auth } from '@/lib/auth'
 import { ChatError } from '@/lib/errors'
 import { checkRateLimit } from '@/lib/ratelimit'
 
 import type { UIMessage } from 'ai'
-
-const deepseek = createDeepSeek({ apiKey: env.DEEPSEEK_API_KEY })
-const baseModel = deepseek('deepseek-chat')
-const model
-  = env.NODE_ENV === 'development'
-    ? wrapLanguageModel({ model: baseModel, middleware: devToolsMiddleware() })
-    : baseModel
 
 const bodySchema = z.object({
   messages: z.array(z.custom<UIMessage>()),
