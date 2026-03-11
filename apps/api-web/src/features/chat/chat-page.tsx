@@ -45,7 +45,7 @@ function ChatLayout({ messages, onSend, onStop, status }: {
   return (
     <SidebarInset>
       <header
-        className="fixed top-0 right-0 z-[9] flex h-14 items-center gap-2 bg-background pr-3 transition-[left] duration-200 ease-linear"
+        className="fixed top-0 right-0 z-[9] flex h-14 items-center justify-center bg-background transition-[left] duration-200 ease-linear"
         style={{ left: sidebarLeft }}
       >
         <Breadcrumb>
