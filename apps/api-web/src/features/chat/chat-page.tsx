@@ -75,6 +75,11 @@ function ChatLayout({ messages, onSend, onStop, status }: {
                 className="fixed right-0 bottom-0 z-[9] flex justify-center bg-background transition-[left] duration-200 ease-linear"
                 style={{ left: sidebarLeft }}
               >
+                <div
+                  aria-hidden
+                  className="absolute -top-[50px] bottom-0 start-0 z-[-1] h-[100px] w-full pointer-events-none"
+                  style={{ background: 'linear-gradient(180deg, color(from var(--background) srgb r g b / 0), color(from var(--background) srgb r g b / 100) 60%)' }}
+                />
                 <div className="w-full max-w-190">
                   <ChatInput onSend={onSend} onStop={onStop} status={status} />
                 </div>

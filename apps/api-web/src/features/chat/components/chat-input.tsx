@@ -94,11 +94,10 @@ export function ChatInput({ onSend, onStop, status }: ChatInputProps) {
   return (
     <PromptInput
       onSubmit={handleSubmit}
-      className="border-t rounded-none"
       accept="image/jpeg,image/png"
     >
       <FilePreview />
-      <PromptInputBody>
+      <PromptInputBody className="p-9">
         <PromptInputTextarea placeholder="Send a message..." />
       </PromptInputBody>
       <PromptInputFooter className="justify-between">
