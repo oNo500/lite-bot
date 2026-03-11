@@ -22,6 +22,7 @@ import { appDataPartSchemas } from '@/lib/ai/stream-events'
 
 import { ChatInput } from './components/chat-input'
 import { ChatMessages } from './components/chat-messages'
+import { SuggestedActions } from './components/suggested-actions'
 
 import type { AppUIMessage } from '@/lib/ai/stream-events'
 import type { FileUIPart, TextUIPart, UIMessage } from 'ai'
@@ -64,6 +65,7 @@ function ChatLayout({ messages, onSend, onStop, status }: {
         ? (
             <div className="flex min-h-svh items-center justify-center pt-14">
               <div className="w-full max-w-[760px]">
+                <SuggestedActions onSend={onSend} />
                 <ChatInput onSend={onSend} onStop={onStop} status={status} />
               </div>
             </div>
