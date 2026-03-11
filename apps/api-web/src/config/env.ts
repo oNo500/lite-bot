@@ -10,6 +10,7 @@ export const env = createEnv({
     GITHUB_CLIENT_SECRET: z.string(),
     XAI_API_KEY: z.string().min(1),
     REDIS_URL: z.string().optional(),
+    BLOB_READ_WRITE_TOKEN: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_NAME: z.string().optional().default('example app'),
@@ -26,6 +27,7 @@ export const env = createEnv({
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     XAI_API_KEY: process.env.XAI_API_KEY,
     REDIS_URL: process.env.REDIS_URL,
+    BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,

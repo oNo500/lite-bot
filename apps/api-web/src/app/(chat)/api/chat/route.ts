@@ -13,8 +13,27 @@ import { checkRateLimit } from '@/lib/ratelimit'
 
 import type { UIMessage } from 'ai'
 
+const filePartSchema = z.object({
+  type: z.literal('file'),
+  url: z.url().refine((u) => u.startsWith('https://'), 'Only https URLs allowed'),
+  mediaType: z.enum(['image/jpeg', 'image/png']),
+  filename: z.string().optional(),
+})
+
+const messagePartSchema = z.union([
+  z.object({ type: z.literal('text'), text: z.string() }),
+  filePartSchema,
+  z.looseObject({ type: z.string() }),
+])
+
+const uiMessageSchema = z.looseObject({
+  id: z.string(),
+  role: z.enum(['user', 'assistant', 'system', 'tool']),
+  parts: z.array(messagePartSchema),
+})
+
 const bodySchema = z.object({
-  messages: z.array(z.custom<UIMessage>()),
+  messages: z.array(uiMessageSchema),
   chatId: z.uuid(),
 })
 
@@ -38,7 +57,7 @@ export async function POST(req: Request) {
   const parsed = bodySchema.safeParse(await req.json())
   if (!parsed.success) return new ChatError('Bad Request', 400).toResponse()
 
-  const { messages, chatId } = parsed.data
+  const { messages, chatId } = parsed.data as { messages: UIMessage[], chatId: string }
   if (!chatId) return new ChatError('Bad Request', 400).toResponse()
 
   const { isNew, userId: chatOwnerId } = await ensureChat(session.user.id, chatId)
