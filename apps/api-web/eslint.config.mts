@@ -7,15 +7,15 @@ import { defineConfig } from "eslint/config";
 const appConfig : Linter.Config[] = defineConfig({
   ignores: ['.agents/**'],
   extends: composeConfig({
-      typescript: { tsconfigRootDir: import.meta.dirname },
-      imports: {
-        typescript: true,
-      },
-      nextjs: true,
-      react: true,
-      unicorn: true,
-      stylistic: true,
-    })
+    typescript: { tsconfigRootDir: import.meta.dirname },
+    imports: {
+      typescript: true,
+    },
+    nextjs: true,
+    react: true,
+    unicorn: true,
+    stylistic: true,
+  }),
 })
 const vitestConfig:Linter.Config[] =defineConfig({
   files:GLOB_TESTS,

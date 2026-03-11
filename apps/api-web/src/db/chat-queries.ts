@@ -34,6 +34,21 @@ export async function getChatById(chatId: string): Promise<Chat | undefined> {
   return found
 }
 
+// 原子性确保 chat 存在，返回是否为新建
+export async function ensureChat(userId: string, chatId: string): Promise<{ isNew: boolean, userId: string }> {
+  const [inserted] = await db
+    .insert(chat)
+    .values({ id: chatId, userId, title: 'New Chat' })
+    .onConflictDoNothing()
+    .returning()
+
+  if (inserted) return { isNew: true, userId: inserted.userId }
+
+  const [existing] = await db.select().from(chat).where(eq(chat.id, chatId))
+  if (!existing) throw new Error('Chat not found after upsert')
+  return { isNew: false, userId: existing.userId }
+}
+
 export async function updateChatTitle(chatId: string, title: string): Promise<void> {
   await db.update(chat).set({ title }).where(eq(chat.id, chatId))
 }

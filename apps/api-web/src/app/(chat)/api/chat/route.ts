@@ -1,30 +1,40 @@
-import { createDeepSeek } from '@ai-sdk/deepseek'
-import { devToolsMiddleware } from '@ai-sdk/devtools'
-import { convertToModelMessages, streamText, wrapLanguageModel } from 'ai'
+import { createIdGenerator, convertToModelMessages, streamText } from 'ai'
 import { checkBotId } from 'botid/server'
 import { headers } from 'next/headers'
 import { after } from 'next/server'
 import { z } from 'zod'
 
-import { env } from '@/config/env'
-import { createChat, getChatById, saveMessages } from '@/db/chat-queries'
+import { ensureChat, saveMessages } from '@/db/chat-queries'
 import { generateChatTitle } from '@/features/chat/actions'
+import { model } from '@/lib/ai/provider'
 import { auth } from '@/lib/auth'
 import { ChatError } from '@/lib/errors'
 import { checkRateLimit } from '@/lib/ratelimit'
 
 import type { UIMessage } from 'ai'
 
-const deepseek = createDeepSeek({ apiKey: env.DEEPSEEK_API_KEY })
-const baseModel = deepseek('deepseek-chat')
-const model
-  = env.NODE_ENV === 'development'
-    ? wrapLanguageModel({ model: baseModel, middleware: devToolsMiddleware() })
-    : baseModel
+const filePartSchema = z.object({
+  type: z.literal('file'),
+  url: z.url().refine((u) => u.startsWith('https://'), 'Only https URLs allowed'),
+  mediaType: z.enum(['image/jpeg', 'image/png']),
+  filename: z.string().optional(),
+})
+
+const messagePartSchema = z.union([
+  z.object({ type: z.literal('text'), text: z.string() }),
+  filePartSchema,
+  z.looseObject({ type: z.string() }),
+])
+
+const uiMessageSchema = z.looseObject({
+  id: z.string(),
+  role: z.enum(['user', 'assistant', 'system', 'tool']),
+  parts: z.array(messagePartSchema),
+})
 
 const bodySchema = z.object({
-  messages: z.array(z.custom<UIMessage>()),
-  chatId: z.uuid().optional(),
+  messages: z.array(uiMessageSchema),
+  chatId: z.uuid(),
 })
 
 export async function POST(req: Request) {
@@ -47,36 +57,24 @@ export async function POST(req: Request) {
   const parsed = bodySchema.safeParse(await req.json())
   if (!parsed.success) return new ChatError('Bad Request', 400).toResponse()
 
-  const { messages, chatId: incomingChatId } = parsed.data
-  let chatId = incomingChatId
-  let isNewChat = false
+  const { messages, chatId } = parsed.data as { messages: UIMessage[], chatId: string }
+  if (!chatId) return new ChatError('Bad Request', 400).toResponse()
 
-  if (chatId) {
-    const existing = await getChatById(chatId)
-    if (existing) {
-      if (existing.userId !== session.user.id) {
-        return new ChatError('Forbidden', 403).toResponse()
-      }
-    } else {
-      await createChat(session.user.id, 'New Chat', chatId)
-      isNewChat = true
-    }
-  } else {
-    const newChat = await createChat(session.user.id, 'New Chat')
-    chatId = newChat.id
-    isNewChat = true
+  const { isNew, userId: chatOwnerId } = await ensureChat(session.user.id, chatId)
+  if (!isNew && chatOwnerId !== session.user.id) {
+    return new ChatError('Forbidden', 403).toResponse()
   }
 
-  const userMessages = messages.filter((m) => m.role === 'user')
-  await saveMessages(
-    userMessages.map((m) => ({
-      id: m.id,
+  const lastUserMessage = messages.toReversed().find((m) => m.role === 'user')
+  if (lastUserMessage) {
+    await saveMessages([{
+      id: lastUserMessage.id,
       chatId: chatId,
-      role: m.role,
-      parts: m.parts as unknown[],
+      role: lastUserMessage.role,
+      parts: lastUserMessage.parts as unknown[],
       attachments: [],
-    })),
-  )
+    }])
+  }
 
   const result = streamText({
     model,
@@ -84,24 +82,24 @@ export async function POST(req: Request) {
   })
 
   const response = result.toUIMessageStreamResponse({
-    onFinish: async ({ messages: updatedMessages }) => {
-      const assistantMessages = updatedMessages.filter((m) => m.role === 'assistant')
-      await saveMessages(
-        assistantMessages.map((m) => ({
-          id: m.id,
-          chatId: chatId,
-          role: m.role,
-          parts: m.parts as unknown[],
-          attachments: [],
-        })),
-      )
+    originalMessages: messages,
+    generateMessageId: createIdGenerator({ prefix: 'msg', size: 16 }),
+    onFinish: async ({ responseMessage }) => {
+      await saveMessages([{
+        id: responseMessage.id,
+        chatId: chatId,
+        role: responseMessage.role,
+        parts: responseMessage.parts as unknown[],
+        attachments: [],
+      }])
 
-      if (isNewChat) {
-        const firstUserMsg = messages.find((m) => m.role === 'user')
-        const firstTextPart = firstUserMsg?.parts.find((p) => p.type === 'text')
+      if (isNew) {
+        const lastUserMsg = messages.toReversed().find((m) => m.role === 'user')
+        const firstTextPart = lastUserMsg?.parts.find((p) => p.type === 'text')
         const text
           = firstTextPart && 'text' in firstTextPart ? String(firstTextPart.text) : ''
-        if (text) {
+        const userMsgCount = messages.filter((m) => m.role === 'user').length
+        if (text && userMsgCount === 1) {
           after(generateChatTitle(chatId, text))
         }
       }

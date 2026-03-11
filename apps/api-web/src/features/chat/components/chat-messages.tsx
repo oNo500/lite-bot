@@ -1,6 +1,7 @@
 'use client'
 
 import { CopyIcon } from 'lucide-react'
+import Image from 'next/image'
 import { useEffect, useRef } from 'react'
 
 import {
@@ -28,17 +29,25 @@ export function ChatMessages({ messages }: { messages: UIMessage[] }) {
         <div key={message.id}>
           <Message from={message.role}>
             <MessageContent>
-              {message.parts.map((part, i) => {
-                if (part.type === 'text') {
-                  return (
-                    // eslint-disable-next-line @eslint-react/no-array-index-key
-                    <MessageResponse key={`${message.id}-${i}`} parseIncompleteMarkdown>
-                      {part.text}
-                    </MessageResponse>
-                  )
-                }
-                return null
-              })}
+              {(() => {
+                const counters: Record<string, number> = {}
+                return message.parts.map((part) => {
+                  counters[part.type] = (counters[part.type] ?? 0) + 1
+                  const key = `${message.id}-${part.type}-${counters[part.type]}`
+                  if (part.type === 'text') {
+                    return (
+                      <MessageResponse key={key} parseIncompleteMarkdown>
+                        {part.text}
+                      </MessageResponse>
+                    )
+                  }
+                  if (part.type === 'file' && 'url' in part && 'mediaType' in part) {
+                    const alt = 'filename' in part ? String(part.filename) : 'Attached image'
+                    return <Image key={key} src={part.url} alt={alt} width={320} height={320} className="rounded-lg object-contain" />
+                  }
+                  return null
+                })
+              })()}
             </MessageContent>
           </Message>
           {message.role === 'assistant' && (
