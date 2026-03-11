@@ -30,5 +30,6 @@ export const appPaths = {
     files: {
       upload: { href: '/api/files/upload' },
     },
+    history: { href: '/api/history' },
   },
 }

@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { and, eq, lt } from 'drizzle-orm'
 
 import { db } from '@/db'
 
@@ -51,4 +51,27 @@ export async function ensureChat(userId: string, chatId: string): Promise<{ isNe
 
 export async function updateChatTitle(chatId: string, title: string): Promise<void> {
   await db.update(chat).set({ title }).where(eq(chat.id, chatId))
+}
+
+export async function getChatsByUserIdPaginated(
+  userId: string,
+  limit: number,
+  endingBefore?: string,
+): Promise<Chat[]> {
+  if (endingBefore) {
+    const [cursor] = await db.select({ createdAt: chat.createdAt }).from(chat).where(eq(chat.id, endingBefore))
+    if (cursor) {
+      return db
+        .select()
+        .from(chat)
+        .where(and(eq(chat.userId, userId), lt(chat.createdAt, cursor.createdAt)))
+        .orderBy(chat.createdAt)
+        .limit(limit)
+    }
+  }
+  return db.select().from(chat).where(eq(chat.userId, userId)).orderBy(chat.createdAt).limit(limit)
+}
+
+export async function deleteChat(chatId: string, userId: string): Promise<void> {
+  await db.delete(chat).where(and(eq(chat.id, chatId), eq(chat.userId, userId)))
 }
