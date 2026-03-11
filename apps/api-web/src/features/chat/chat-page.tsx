@@ -22,7 +22,7 @@ import { appPaths } from '@/config/app-paths'
 import { ChatInput } from './components/chat-input'
 import { ChatMessages } from './components/chat-messages'
 
-import type { UIMessage } from 'ai'
+import type { FileUIPart, TextUIPart, UIMessage } from 'ai'
 import type { ReactNode } from 'react'
 
 interface ChatPageProps {
@@ -55,8 +55,8 @@ export function ChatPage({ sidebar, chatId, initialMessages }: ChatPageProps) {
     },
   })
 
-  function handleSend(text: string) {
-    void sendMessage({ text })
+  function handleSend(parts: (TextUIPart | FileUIPart)[]) {
+    void sendMessage({ parts })
   }
 
   return (
