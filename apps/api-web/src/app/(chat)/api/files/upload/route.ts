@@ -30,6 +30,7 @@ export async function POST(req: Request) {
   const blob = await put(`${session.user.id}/${file.name}`, file, {
     access: 'public',
     contentType: file.type,
+    addRandomSuffix: true,
     token: env.BLOB_READ_WRITE_TOKEN,
   })
 
