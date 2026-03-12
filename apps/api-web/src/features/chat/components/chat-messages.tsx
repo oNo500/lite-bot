@@ -12,7 +12,7 @@ import {
   MessageResponse,
 } from '@/components/ai-elements/message'
 
-import type { UIMessage } from 'ai'
+import type { DynamicToolUIPart, UIMessage } from 'ai'
 
 import 'streamdown/styles.css'
 
@@ -46,6 +46,20 @@ export function ChatMessages({ messages }: { messages: UIMessage[] }) {
                   if (part.type === 'file' && 'url' in part && 'mediaType' in part) {
                     const alt = 'filename' in part ? String(part.filename) : 'Attached image'
                     return <Image key={key} src={part.url} alt={alt} width={320} height={320} className="rounded-lg object-contain" />
+                  }
+                  if (part.type === 'dynamic-tool' || part.type.startsWith('tool-')) {
+                    const toolPart = part as DynamicToolUIPart
+                    const toolName = part.type === 'dynamic-tool'
+                      ? toolPart.toolName
+                      : part.type.slice('tool-'.length)
+                    const isDone = toolPart.state === 'output-available'
+                    return (
+                      <div key={key} className="text-xs text-muted-foreground font-mono bg-muted/50 rounded px-2 py-1">
+                        {isDone
+                          ? `${toolName}: ${JSON.stringify(toolPart.output)}`
+                          : `Calling ${toolName}...`}
+                      </div>
+                    )
                   }
                   return null
                 })

@@ -3,6 +3,7 @@ import {
   createIdGenerator,
   createUIMessageStream,
   createUIMessageStreamResponse,
+  stepCountIs,
   streamText,
 } from 'ai'
 import { checkBotId } from 'botid/server'
@@ -13,6 +14,7 @@ import { ensureChat, saveMessages } from '@/db/chat-queries'
 import { generateChatTitle } from '@/features/chat/actions'
 import { model } from '@/lib/ai/provider'
 import { createEventWriter } from '@/lib/ai/stream-events'
+import { aiTools } from '@/lib/ai/tools'
 import { auth } from '@/lib/auth'
 import { ChatError } from '@/lib/errors'
 import { checkRateLimit } from '@/lib/ratelimit'
@@ -97,6 +99,8 @@ export async function POST(req: Request) {
       const result = streamText({
         model,
         messages: await convertToModelMessages(messages),
+        tools: aiTools,
+        stopWhen: stepCountIs(5),
         onFinish: async () => {
           if (isNew && userMsgCount === 1 && text) {
             const title = await generateChatTitle(chatId, text)
