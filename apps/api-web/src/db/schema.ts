@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm'
-import { pgTable, text, timestamp, boolean, index, uuid, varchar, json } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean, index, uuid, varchar, json, integer, unique } from 'drizzle-orm/pg-core'
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -90,6 +90,28 @@ export const chatMessage = pgTable('chat_message', {
   attachments: json('attachments').notNull().default([]),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
+
+export const messageEval = pgTable(
+  'message_eval',
+  {
+    id: uuid('id').primaryKey().notNull().defaultRandom(),
+    messageId: text('message_id').notNull().references(() => chatMessage.id, { onDelete: 'cascade' }),
+    score: integer('score').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at')
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [unique('message_eval_message_id_unique').on(table.messageId)],
+)
+
+export const messageEvalRelations = relations(messageEval, ({ one }) => ({
+  message: one(chatMessage, {
+    fields: [messageEval.messageId],
+    references: [chatMessage.id],
+  }),
+}))
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),

@@ -31,5 +31,6 @@ export const appPaths = {
       upload: { href: '/api/files/upload' },
     },
     history: { href: '/api/history' },
+    reflection: { href: '/api/reflection' },
   },
 }

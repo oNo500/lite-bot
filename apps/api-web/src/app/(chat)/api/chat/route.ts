@@ -11,13 +11,14 @@ import { headers } from 'next/headers'
 import { z } from 'zod'
 
 import { ensureChat, saveMessages } from '@/db/chat-queries'
-import { generateChatTitle } from '@/features/chat/actions'
 import { model } from '@/lib/ai/provider'
 import { createEventWriter } from '@/lib/ai/stream-events'
 import { aiTools } from '@/lib/ai/tools'
 import { auth } from '@/lib/auth'
 import { ChatError } from '@/lib/errors'
 import { checkRateLimit } from '@/lib/ratelimit'
+
+import { generateChatTitle } from './actions'
 
 import type { AppUIMessage } from '@/lib/ai/stream-events'
 import type { UIMessage } from 'ai'
