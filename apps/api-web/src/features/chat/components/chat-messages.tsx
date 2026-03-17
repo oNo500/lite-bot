@@ -95,6 +95,64 @@ function AssistantActions({ message, messages }: { message: UIMessage, messages:
   )
 }
 
+function renderMessageParts(message: UIMessage) {
+  const counters: Record<string, number> = {}
+  return message.parts.map((part) => {
+    counters[part.type] = (counters[part.type] ?? 0) + 1
+    const key = `${message.id}-${part.type}-${counters[part.type]}`
+    if (part.type === 'text') {
+      return (
+        <MessageResponse key={key} parseIncompleteMarkdown>
+          {part.text}
+        </MessageResponse>
+      )
+    }
+    if (part.type === 'file' && 'url' in part && 'mediaType' in part) {
+      const alt = 'filename' in part ? String(part.filename) : 'Attached image'
+      return <Image key={key} src={part.url} alt={alt} width={320} height={320} className="rounded-lg object-contain" />
+    }
+    if (part.type === 'dynamic-tool' || part.type.startsWith('tool-')) {
+      const toolPart = part as DynamicToolUIPart
+      const toolName = part.type === 'dynamic-tool'
+        ? toolPart.toolName
+        : part.type.slice('tool-'.length)
+      const isDone = toolPart.state === 'output-available'
+      return (
+        <div key={key} className="text-xs border border-border/60 rounded-md overflow-hidden my-1">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/40 border-b border-border/40">
+            <span className="font-mono text-muted-foreground">fn</span>
+            <span className="font-semibold text-foreground">{toolName}</span>
+            {!isDone && (
+              <span className="ml-auto flex items-center gap-1 text-muted-foreground">
+                <span className="inline-block size-1.5 rounded-full bg-amber-400 animate-pulse" />
+                running
+              </span>
+            )}
+            {isDone && (
+              <span className="ml-auto text-emerald-500">done</span>
+            )}
+          </div>
+          {isDone && (
+            <div className="px-3 py-2 space-y-1.5 font-mono">
+              {toolPart.input != null && Object.keys(toolPart.input as Record<string, unknown>).length > 0 && (
+                <div className="text-muted-foreground/70">
+                  <span className="text-muted-foreground">in </span>
+                  {JSON.stringify(toolPart.input)}
+                </div>
+              )}
+              <div>
+                <span className="text-muted-foreground">out </span>
+                <span className="text-foreground">{JSON.stringify(toolPart.output)}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )
+    }
+    return null
+  })
+}
+
 export function ChatMessages({ messages }: { messages: UIMessage[] }) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -110,63 +168,7 @@ export function ChatMessages({ messages }: { messages: UIMessage[] }) {
         <div key={message.id}>
           <Message from={message.role}>
             <MessageContent>
-              {(() => {
-                const counters: Record<string, number> = {}
-                return message.parts.map((part) => {
-                  counters[part.type] = (counters[part.type] ?? 0) + 1
-                  const key = `${message.id}-${part.type}-${counters[part.type]}`
-                  if (part.type === 'text') {
-                    return (
-                      <MessageResponse key={key} parseIncompleteMarkdown>
-                        {part.text}
-                      </MessageResponse>
-                    )
-                  }
-                  if (part.type === 'file' && 'url' in part && 'mediaType' in part) {
-                    const alt = 'filename' in part ? String(part.filename) : 'Attached image'
-                    return <Image key={key} src={part.url} alt={alt} width={320} height={320} className="rounded-lg object-contain" />
-                  }
-                  if (part.type === 'dynamic-tool' || part.type.startsWith('tool-')) {
-                    const toolPart = part as DynamicToolUIPart
-                    const toolName = part.type === 'dynamic-tool'
-                      ? toolPart.toolName
-                      : part.type.slice('tool-'.length)
-                    const isDone = toolPart.state === 'output-available'
-                    return (
-                      <div key={key} className="text-xs border border-border/60 rounded-md overflow-hidden my-1">
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/40 border-b border-border/40">
-                          <span className="font-mono text-muted-foreground">fn</span>
-                          <span className="font-semibold text-foreground">{toolName}</span>
-                          {!isDone && (
-                            <span className="ml-auto flex items-center gap-1 text-muted-foreground">
-                              <span className="inline-block size-1.5 rounded-full bg-amber-400 animate-pulse" />
-                              running
-                            </span>
-                          )}
-                          {isDone && (
-                            <span className="ml-auto text-emerald-500">done</span>
-                          )}
-                        </div>
-                        {isDone && (
-                          <div className="px-3 py-2 space-y-1.5 font-mono">
-                            {toolPart.input != null && Object.keys(toolPart.input as Record<string, unknown>).length > 0 && (
-                              <div className="text-muted-foreground/70">
-                                <span className="text-muted-foreground">in </span>
-                                {JSON.stringify(toolPart.input)}
-                              </div>
-                            )}
-                            <div>
-                              <span className="text-muted-foreground">out </span>
-                              <span className="text-foreground">{JSON.stringify(toolPart.output)}</span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )
-                  }
-                  return null
-                })
-              })()}
+              {renderMessageParts(message)}
             </MessageContent>
           </Message>
           {message.role === 'assistant' && (

@@ -1,10 +1,9 @@
-import { GLOB_TESTS } from "@workspace/eslint-config";
-import { composeConfig } from "@workspace/eslint-config";
+import { GLOB_TESTS, composeConfig } from '@workspace/eslint-config'
+import { defineConfig } from 'eslint/config'
 
-import type { Linter } from "eslint";
-import { defineConfig } from "eslint/config";
+import type { Linter } from 'eslint'
 
-const appConfig : Linter.Config[] = defineConfig({
+const appConfig: Linter.Config[] = defineConfig({
   ignores: ['.agents/**'],
   extends: composeConfig({
     typescript: { tsconfigRootDir: import.meta.dirname },
@@ -17,16 +16,15 @@ const appConfig : Linter.Config[] = defineConfig({
     stylistic: true,
   }),
 })
-const vitestConfig:Linter.Config[] =defineConfig({
-  files:GLOB_TESTS,
-  extends:composeConfig({
-      typescript: { tsconfigRootDir: import.meta.dirname },
-      vitest: true,
-      unicorn: false,
-      stylistic: false,
-      depend:false
-    }),
+const vitestConfig: Linter.Config[] = defineConfig({
+  files: GLOB_TESTS,
+  extends: composeConfig({
+    typescript: { tsconfigRootDir: import.meta.dirname },
+    vitest: true,
+    unicorn: false,
+    stylistic: false,
+    depend: false,
+  }),
 })
 
-
-export default [...appConfig,...vitestConfig];
+export default [...appConfig, ...vitestConfig]

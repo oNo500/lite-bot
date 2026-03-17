@@ -21,6 +21,7 @@
     "@ai-sdk/devtools": "^0.0.15",
     "@ai-sdk/react": "^3.0.118",
     "@ai-sdk/xai": "^3.0.67",
+    "@infra-x/eslint-config": "^0.1.8",
     "@infra-x/fwrap": "^0.1.1",
     "@streamdown/cjk": "^1.0.2",
     "@streamdown/code": "^1.1.0",
