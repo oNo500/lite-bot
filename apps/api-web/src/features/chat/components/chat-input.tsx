@@ -1,6 +1,6 @@
 'use client'
 
-import { PaperclipIcon, XIcon } from 'lucide-react'
+import { BookOpenIcon, PaperclipIcon, XIcon } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 
@@ -24,6 +24,8 @@ interface ChatInputProps {
   onSend: (parts: MessagePart[]) => void
   onStop?: () => void
   status?: ChatStatus
+  ragEnabled?: boolean
+  onRagToggle?: () => void
 }
 
 async function uploadFile(dataUrl: string, mediaType: string): Promise<string> {
@@ -69,7 +71,7 @@ function FilePreview() {
   )
 }
 
-export function ChatInput({ onSend, onStop, status }: ChatInputProps) {
+export function ChatInput({ onSend, onStop, status, ragEnabled = false, onRagToggle }: ChatInputProps) {
   const [isUploading, setIsUploading] = useState(false)
 
   async function handleSubmit(message: PromptInputMessage) {
@@ -101,7 +103,18 @@ export function ChatInput({ onSend, onStop, status }: ChatInputProps) {
         <PromptInputTextarea placeholder="Send a message..." />
       </PromptInputBody>
       <PromptInputFooter className="justify-between">
-        <AttachButton />
+        <div className="flex items-center gap-1">
+          <AttachButton />
+          <PromptInputButton
+            tooltip={ragEnabled ? '关闭知识库' : '开启知识库'}
+            onClick={onRagToggle}
+            aria-label={ragEnabled ? '关闭知识库' : '开启知识库'}
+            aria-pressed={ragEnabled}
+            className={ragEnabled ? 'text-primary' : ''}
+          >
+            <BookOpenIcon className="size-4" />
+          </PromptInputButton>
+        </div>
         <PromptInputSubmit status={isUploading ? 'submitted' : status} onStop={onStop} />
       </PromptInputFooter>
     </PromptInput>

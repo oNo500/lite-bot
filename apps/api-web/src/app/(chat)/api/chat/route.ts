@@ -16,6 +16,7 @@ import { createEventWriter } from '@/lib/ai/stream-events'
 import { aiTools } from '@/lib/ai/tools'
 import { auth } from '@/lib/auth'
 import { ChatError } from '@/lib/errors'
+import { buildRagSystemPrompt } from '@/lib/rag/retrieve'
 import { checkRateLimit } from '@/lib/ratelimit'
 
 import { generateChatTitle } from './actions'
@@ -45,6 +46,7 @@ const uiMessageSchema = z.looseObject({
 const bodySchema = z.object({
   messages: z.array(uiMessageSchema),
   chatId: z.uuid(),
+  useRag: z.boolean().optional().default(false),
 })
 
 export async function POST(req: Request) {
@@ -67,7 +69,7 @@ export async function POST(req: Request) {
   const parsed = bodySchema.safeParse(await req.json())
   if (!parsed.success) return new ChatError('Bad Request', 400).toResponse()
 
-  const { messages, chatId } = parsed.data as { messages: UIMessage[], chatId: string }
+  const { messages, chatId, useRag } = parsed.data as { messages: UIMessage[], chatId: string, useRag: boolean }
   if (!chatId) return new ChatError('Bad Request', 400).toResponse()
 
   const { isNew, userId: chatOwnerId } = await ensureChat(session.user.id, chatId)
@@ -91,6 +93,10 @@ export async function POST(req: Request) {
   const text = firstTextPart && 'text' in firstTextPart ? String(firstTextPart.text) : ''
   const userMsgCount = messages.filter((m) => m.role === 'user').length
 
+  const systemPrompt = useRag
+    ? await buildRagSystemPrompt(text, session.user.id)
+    : 'You are a helpful assistant.'
+
   const stream = createUIMessageStream<AppUIMessage>({
     originalMessages: messages as AppUIMessage[],
     generateId: createIdGenerator({ prefix: 'msg', size: 16 }),
@@ -99,6 +105,7 @@ export async function POST(req: Request) {
 
       const result = streamText({
         model,
+        system: systemPrompt,
         messages: await convertToModelMessages(messages),
         tools: aiTools,
         stopWhen: stepCountIs(5),

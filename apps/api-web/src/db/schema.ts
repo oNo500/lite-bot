@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm'
-import { pgTable, text, timestamp, boolean, index, uuid, varchar, json, integer, unique } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean, index, uuid, varchar, json, integer, unique, vector } from 'drizzle-orm/pg-core'
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -117,6 +117,7 @@ export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
   chats: many(chat),
+  ragDocuments: many(ragDocument),
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -146,4 +147,36 @@ export const chatMessageRelations = relations(chatMessage, ({ one }) => ({
     fields: [chatMessage.chatId],
     references: [chat.id],
   }),
+}))
+
+export const ragDocument = pgTable('rag_document', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  mimeType: text('mime_type').notNull(),
+  size: integer('size').notNull(),
+  status: varchar('status', { enum: ['pending', 'processing', 'ready', 'error'] }).default('pending').notNull(),
+  errorMessage: text('error_message'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+})
+
+export const ragChunk = pgTable('rag_chunk', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  documentId: uuid('document_id').notNull().references(() => ragDocument.id, { onDelete: 'cascade' }),
+  content: text('content').notNull(),
+  embedding: vector('embedding', { dimensions: 1536 }),
+  chunkIndex: integer('chunk_index').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (table) => [
+  index('rag_chunk_embedding_idx').using('hnsw', table.embedding.op('vector_cosine_ops')),
+])
+
+export const ragDocumentRelations = relations(ragDocument, ({ one, many }) => ({
+  user: one(user, { fields: [ragDocument.userId], references: [user.id] }),
+  chunks: many(ragChunk),
+}))
+
+export const ragChunkRelations = relations(ragChunk, ({ one }) => ({
+  document: one(ragDocument, { fields: [ragChunk.documentId], references: [ragDocument.id] }),
 }))
