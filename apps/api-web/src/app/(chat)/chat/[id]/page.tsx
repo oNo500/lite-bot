@@ -4,18 +4,7 @@ import { notFound } from 'next/navigation'
 import { getMessagesByChatId, getChatById } from '@/db/chat-queries'
 import { ChatPage } from '@/features/chat/chat-page'
 import { AppSidebar } from '@/features/chat/components/app-sidebar'
-
-import type { ChatMessage } from '@/db/chat-queries'
-import type { UIMessage } from 'ai'
-
-function toUIMessages(messages: ChatMessage[]): UIMessage[] {
-  return messages.map((m) => ({
-    id: m.id,
-    role: m.role as UIMessage['role'],
-    parts: m.parts as UIMessage['parts'],
-    metadata: {},
-  }))
-}
+import { toUIMessages } from '@/features/chat/utils/to-ui-messages'
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

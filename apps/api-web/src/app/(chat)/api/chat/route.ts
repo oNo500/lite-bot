@@ -39,7 +39,7 @@ const messagePartSchema = z.union([
 
 const uiMessageSchema = z.looseObject({
   id: z.string(),
-  role: z.enum(['user', 'assistant', 'system', 'tool']),
+  role: z.enum(['user', 'assistant', 'system']),
   parts: z.array(messagePartSchema),
 })
 
@@ -69,7 +69,8 @@ export async function POST(req: Request) {
   const parsed = bodySchema.safeParse(await req.json())
   if (!parsed.success) return new ChatError('Bad Request', 400).toResponse()
 
-  const { messages, chatId, useRag } = parsed.data as { messages: UIMessage[], chatId: string, useRag: boolean }
+  const { messages: rawMessages, chatId, useRag } = parsed.data
+  const messages = rawMessages as UIMessage[]
   if (!chatId) return new ChatError('Bad Request', 400).toResponse()
 
   const { isNew, userId: chatOwnerId } = await ensureChat(session.user.id, chatId)
@@ -83,7 +84,7 @@ export async function POST(req: Request) {
       id: lastUserMessage.id,
       chatId: chatId,
       role: lastUserMessage.role,
-      parts: lastUserMessage.parts as unknown[],
+      parts: lastUserMessage.parts,
       attachments: [],
     }])
   }
@@ -124,7 +125,7 @@ export async function POST(req: Request) {
         id: responseMessage.id,
         chatId,
         role: responseMessage.role,
-        parts: responseMessage.parts as unknown[],
+        parts: responseMessage.parts,
         attachments: [],
       }])
     },
