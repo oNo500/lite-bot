@@ -26,11 +26,19 @@ export const appPaths = {
     index: { href: '/chat' },
     detail: { href: (id: string) => `/chat/${id}` },
   },
+  rag: {
+    index: { href: '/rag' },
+  },
   api: {
     files: {
       upload: { href: '/api/files/upload' },
     },
     history: { href: '/api/history' },
     reflection: { href: '/api/reflection' },
+    rag: {
+      documents: { href: '/api/rag/documents' },
+      document: { href: (id: string) => `/api/rag/documents/${id}` },
+      ingest: { href: (id: string) => `/api/rag/ingest/${id}` },
+    },
   },
 }

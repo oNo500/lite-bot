@@ -13,7 +13,7 @@ import {
   useSidebar,
 } from '@workspace/ui/components/sidebar'
 import { DefaultChatTransport } from 'ai'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 import { StreamEventProvider, useStreamEventDispatch } from '@/components/stream-event-provider'
 import { appPaths } from '@/config/app-paths'
@@ -35,11 +35,13 @@ interface ChatPageProps {
   sidebarDefaultOpen?: boolean
 }
 
-function ChatLayout({ messages, onSend, onStop, status }: {
+function ChatLayout({ messages, onSend, onStop, status, ragEnabled, onRagToggle }: {
   messages: ReturnType<typeof useChat>['messages']
   onSend: (parts: (TextUIPart | FileUIPart)[]) => void
   onStop: () => void
   status: ReturnType<typeof useChat>['status']
+  ragEnabled: boolean
+  onRagToggle: () => void
 }) {
   const { state, isMobile } = useSidebar()
   const sidebarLeft = isMobile
@@ -67,7 +69,7 @@ function ChatLayout({ messages, onSend, onStop, status }: {
             <div className="flex min-h-svh items-center justify-center pt-14">
               <div className="w-full max-w-[760px]">
                 <SuggestedActions onSend={onSend} />
-                <ChatInput onSend={onSend} onStop={onStop} status={status} />
+                <ChatInput onSend={onSend} onStop={onStop} status={status} ragEnabled={ragEnabled} onRagToggle={onRagToggle} />
               </div>
             </div>
           )
@@ -88,7 +90,7 @@ function ChatLayout({ messages, onSend, onStop, status }: {
                   style={{ background: 'linear-gradient(180deg, color(from var(--background) srgb r g b / 0), color(from var(--background) srgb r g b / 100) 60%)' }}
                 />
                 <div className="w-full max-w-190">
-                  <ChatInput onSend={onSend} onStop={onStop} status={status} />
+                  <ChatInput onSend={onSend} onStop={onStop} status={status} ragEnabled={ragEnabled} onRagToggle={onRagToggle} />
                 </div>
               </div>
             </>
@@ -101,15 +103,16 @@ function ChatPageInner({ sidebar, chatId, initialMessages, sidebarDefaultOpen = 
   const isNewChat = !initialMessages?.length
   const dispatch = useStreamEventDispatch()
   useChatTitleHandler()
+  const [ragEnabled, setRagEnabled] = useState(false)
 
   const transport = useMemo(
     () => new DefaultChatTransport({
       api: '/api/chat',
       prepareSendMessagesRequest: ({ id, messages }) => ({
-        body: { chatId: id, messages },
+        body: { chatId: id, messages, useRag: ragEnabled },
       }),
     }),
-    [],
+    [ragEnabled],
   )
 
   const { messages, sendMessage, stop, status } = useChat<AppUIMessage>({
@@ -132,7 +135,14 @@ function ChatPageInner({ sidebar, chatId, initialMessages, sidebarDefaultOpen = 
   return (
     <SidebarProvider defaultOpen={sidebarDefaultOpen}>
       {sidebar}
-      <ChatLayout messages={messages} onSend={handleSend} onStop={stop} status={status} />
+      <ChatLayout
+        messages={messages}
+        onSend={handleSend}
+        onStop={stop}
+        status={status}
+        ragEnabled={ragEnabled}
+        onRagToggle={() => setRagEnabled((v) => !v)}
+      />
     </SidebarProvider>
   )
 }
