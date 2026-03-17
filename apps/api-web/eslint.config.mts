@@ -1,4 +1,4 @@
-import { GLOB_TESTS, composeConfig } from '@workspace/eslint-config'
+import { GLOB_TESTS, composeConfig } from '@infra-x/eslint-config'
 import { defineConfig } from 'eslint/config'
 
 import type { Linter } from 'eslint'
