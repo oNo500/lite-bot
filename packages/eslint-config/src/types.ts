@@ -11,17 +11,6 @@ export interface OptionsOverrides {
 }
 
 /**
- * Stylistic options
- */
-export interface OptionsStylistic {
-  /**
-   * Whether to enable stylistic rules
-   * @default true
-   */
-  stylistic?: boolean
-}
-
-/**
  * File matching options
  */
 export interface OptionsFiles {
@@ -98,13 +87,13 @@ export interface DependOptions extends OptionsOverrides {
 }
 
 export interface IgnoresOptions {
-  /** Custom ignore patterns; pass false to disable the built-in defaults */
-  ignores?: string[] | false
-  /** Path to .gitignore file, or a boolean to enable/disable auto-detection */
-  gitignore?: string | boolean
+  /** Additional ignore patterns to merge with DEFAULT_IGNORES; pass false to disable all global ignores */
+  ignores?: string | string[] | false
+  /** Whether to parse .gitignore and merge into global ignores @default true */
+  gitignore?: boolean
 }
 
-export interface ImportsOptions extends OptionsOverrides, OptionsStylistic {
+export interface ImportsOptions extends OptionsOverrides {
   /**
    * Whether to enable TypeScript support
    * Automatically injected as true by composeConfig when the global typescript option is enabled
@@ -140,8 +129,6 @@ export interface PackageJsonOptions extends OptionsOverrides {
   enforceForPrivate?: boolean
 }
 
-export type PrettierOptions = OptionsOverrides
-
 export interface ReactOptions extends OptionsFiles, OptionsOverrides {
   /**
    * Whether to enable react-refresh plugin (for Vite projects).
@@ -162,4 +149,13 @@ export type UnicornOptions = OptionsFiles & OptionsOverrides
 
 export type VitestOptions = OptionsFiles & OptionsOverrides & {
   isInEditor?: boolean
+}
+
+export interface OxlintOptions {
+  /**
+   * Path to oxlint config file for dynamic rule generation.
+   * When provided, uses `buildFromOxlintConfigFile()` instead of the `flat/recommended` preset.
+   * @example './.oxlintrc.json'
+   */
+  configFile?: string
 }

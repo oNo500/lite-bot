@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "taze": "^19.10.0",
-    "turbo": "^2.8.16"
+    "turbo": "^2.8.17"
   },
   "packageManager": "pnpm@10.32.1",
   "pnpm": {
