@@ -63,6 +63,8 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
     },
   })
 
+  console.log('messages', JSON.stringify(messages, null, 4))
+
   function handleSend(parts: (TextUIPart | FileUIPart)[]) {
     void sendMessage({ parts })
   }
@@ -100,7 +102,7 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
             <>
               <div className="min-h-svh pt-14 pb-36">
                 <div className="mx-auto w-full max-w-190">
-                  <ChatMessages messages={messages} />
+                  <ChatMessages messages={messages} status={status} />
                 </div>
               </div>
               <div

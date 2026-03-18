@@ -153,7 +153,13 @@ function renderMessageParts(message: UIMessage) {
   })
 }
 
-export function ChatMessages({ messages }: { messages: UIMessage[] }) {
+function hasContent(message: UIMessage) {
+  return message.parts.some(
+    (p) => (p.type === 'text' && p.text.length > 0) || p.type === 'file' || p.type === 'dynamic-tool' || p.type.startsWith('tool-'),
+  )
+}
+
+export function ChatMessages({ messages, status }: { messages: UIMessage[], status?: string }) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -161,6 +167,10 @@ export function ChatMessages({ messages }: { messages: UIMessage[] }) {
   }, [messages])
 
   if (messages.length === 0) return null
+
+  const isStreaming = status === 'submitted' || status === 'streaming'
+  const lastMessage = messages.at(-1)
+  const showLoading = isStreaming && lastMessage?.role === 'assistant' && !hasContent(lastMessage)
 
   return (
     <div className="flex-1 space-y-4 overflow-y-auto p-4">
@@ -171,11 +181,18 @@ export function ChatMessages({ messages }: { messages: UIMessage[] }) {
               {renderMessageParts(message)}
             </MessageContent>
           </Message>
-          {message.role === 'assistant' && (
+          {message.role === 'assistant' && hasContent(message) && !(isStreaming && message.id === lastMessage?.id) && (
             <AssistantActions message={message} messages={messages} />
           )}
         </div>
       ))}
+      {showLoading && (
+        <div className="flex gap-1 px-4">
+          <span className="inline-block size-1.5 animate-bounce rounded-full bg-muted-foreground/50 [animation-delay:-0.3s]" />
+          <span className="inline-block size-1.5 animate-bounce rounded-full bg-muted-foreground/50 [animation-delay:-0.15s]" />
+          <span className="inline-block size-1.5 animate-bounce rounded-full bg-muted-foreground/50" />
+        </div>
+      )}
       <div ref={bottomRef} />
     </div>
   )
