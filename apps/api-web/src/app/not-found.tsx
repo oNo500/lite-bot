@@ -16,7 +16,7 @@ export default function NotFound() {
             The page you're looking for doesn't exist or has been moved.
           </p>
         </div>
-        <Button render={<Link href={appPaths.home.href} />} nativeButton={false} variant="outline">
+        <Button render={<Link href={appPaths.chat.index.href} />} nativeButton={false} variant="outline">
           Back to Home
         </Button>
       </div>

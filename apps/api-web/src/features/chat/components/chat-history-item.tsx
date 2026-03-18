@@ -35,7 +35,7 @@ export function ChatHistoryItem({ chat, onDelete }: ChatHistoryItemProps) {
     try {
       await onDelete(chat.id)
       if (isActive) {
-        router.push(appPaths.home.href)
+        router.push(appPaths.chat.index.href)
       }
     } catch {
       toast.error('Failed to delete chat')
