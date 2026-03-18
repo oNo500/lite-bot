@@ -5,7 +5,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from '@workspace/ui/components/sidebar'
 import { PlusIcon } from 'lucide-react'
 import Link from 'next/link'
@@ -37,7 +36,6 @@ export function AppSidebar() {
         <ChatHistory />
       </Suspense>
       <NavSecondary className="mt-auto" />
-      {/* <SidebarRail /> */}
     </Sidebar>
   )
 }

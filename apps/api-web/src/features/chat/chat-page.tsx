@@ -7,11 +7,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from '@workspace/ui/components/breadcrumb'
-import {
-  SidebarInset,
-  SidebarProvider,
-  useSidebar,
-} from '@workspace/ui/components/sidebar'
+import { useSidebar } from '@workspace/ui/components/sidebar'
 import { DefaultChatTransport } from 'ai'
 import { useMemo, useRef, useState } from 'react'
 
@@ -26,86 +22,26 @@ import { SuggestedActions } from './components/suggested-actions'
 
 import type { AppUIMessage } from '@/lib/ai/stream-events'
 import type { FileUIPart, TextUIPart, UIMessage } from 'ai'
-import type { ReactNode } from 'react'
 
 interface ChatPageProps {
-  sidebar: ReactNode
   chatId: string
   initialMessages?: UIMessage[]
-  sidebarDefaultOpen?: boolean
 }
 
-function ChatLayout({ messages, onSend, onStop, status, ragEnabled, onRagToggle }: {
-  messages: ReturnType<typeof useChat>['messages']
-  onSend: (parts: (TextUIPart | FileUIPart)[]) => void
-  onStop: () => void
-  status: ReturnType<typeof useChat>['status']
-  ragEnabled: boolean
-  onRagToggle: () => void
-}) {
-  const { state, isMobile } = useSidebar()
-  const sidebarLeft = isMobile
-    ? '0px'
-    : (state === 'expanded'
-        ? 'var(--sidebar-width)'
-        : 'var(--sidebar-width-icon)')
-
-  return (
-    <SidebarInset>
-      <header
-        className="fixed top-0 right-0 z-[9] flex h-14 items-center justify-center bg-background transition-[left] duration-200 ease-linear"
-        style={{ left: sidebarLeft }}
-      >
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbPage>New Chat</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </header>
-      {messages.length === 0
-        ? (
-            <div className="flex min-h-svh items-center justify-center pt-14">
-              <div className="w-full max-w-[760px]">
-                <SuggestedActions onSend={onSend} />
-                <ChatInput onSend={onSend} onStop={onStop} status={status} ragEnabled={ragEnabled} onRagToggle={onRagToggle} />
-              </div>
-            </div>
-          )
-        : (
-            <>
-              <div className="min-h-svh pt-14 pb-36">
-                <div className="mx-auto w-full max-w-190">
-                  <ChatMessages messages={messages} />
-                </div>
-              </div>
-              <div
-                className="fixed right-0 bottom-0 z-[9] flex justify-center bg-background transition-[left] duration-200 ease-linear"
-                style={{ left: sidebarLeft }}
-              >
-                <div
-                  aria-hidden
-                  className="absolute -top-[50px] bottom-0 start-0 z-[-1] h-[100px] w-full pointer-events-none"
-                  style={{ background: 'linear-gradient(180deg, color(from var(--background) srgb r g b / 0), color(from var(--background) srgb r g b / 100) 60%)' }}
-                />
-                <div className="w-full max-w-190">
-                  <ChatInput onSend={onSend} onStop={onStop} status={status} ragEnabled={ragEnabled} onRagToggle={onRagToggle} />
-                </div>
-              </div>
-            </>
-          )}
-    </SidebarInset>
-  )
-}
-
-function ChatPageInner({ sidebar, chatId, initialMessages, sidebarDefaultOpen = false }: ChatPageProps) {
+function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
   const isNewChat = !initialMessages?.length
   const dispatch = useStreamEventDispatch()
   useChatTitleHandler()
   const [ragEnabled, setRagEnabled] = useState(false)
   const ragEnabledRef = useRef(ragEnabled)
   ragEnabledRef.current = ragEnabled
+
+  const { state, isMobile } = useSidebar()
+  const sidebarLeft = isMobile
+    ? '0px'
+    : (state === 'expanded'
+        ? 'var(--sidebar-width)'
+        : 'var(--sidebar-width-icon)')
 
   const transport = useMemo(
     () => new DefaultChatTransport({
@@ -135,32 +71,58 @@ function ChatPageInner({ sidebar, chatId, initialMessages, sidebarDefaultOpen = 
   }
 
   return (
-    <SidebarProvider
-      style={
-        {
-          '--sidebar-width': '20rem',
-          '--sidebar-width-mobile': '20rem',
-        } as React.CSSProperties
-      }
-      defaultOpen={sidebarDefaultOpen}
-    >
-      {sidebar}
-      <ChatLayout
-        messages={messages}
-        onSend={handleSend}
-        onStop={stop}
-        status={status}
-        ragEnabled={ragEnabled}
-        onRagToggle={() => setRagEnabled((v) => !v)}
-      />
-    </SidebarProvider>
+    <>
+      <header
+        className="fixed top-0 right-0 z-[9] flex h-14 items-center justify-center bg-background transition-[left] duration-200 ease-linear"
+        style={{ left: sidebarLeft }}
+      >
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbPage>New Chat</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </header>
+      {messages.length === 0
+        ? (
+            <div className="flex min-h-svh items-center justify-center pt-14">
+              <div className="w-full max-w-[760px]">
+                <SuggestedActions onSend={handleSend} />
+                <ChatInput onSend={handleSend} onStop={stop} status={status} ragEnabled={ragEnabled} onRagToggle={() => setRagEnabled((v) => !v)} />
+              </div>
+            </div>
+          )
+        : (
+            <>
+              <div className="min-h-svh pt-14 pb-36">
+                <div className="mx-auto w-full max-w-190">
+                  <ChatMessages messages={messages} />
+                </div>
+              </div>
+              <div
+                className="fixed right-0 bottom-0 z-[9] flex justify-center bg-background transition-[left] duration-200 ease-linear"
+                style={{ left: sidebarLeft }}
+              >
+                <div
+                  aria-hidden
+                  className="absolute -top-[50px] bottom-0 start-0 z-[-1] h-[100px] w-full pointer-events-none"
+                  style={{ background: 'linear-gradient(180deg, color(from var(--background) srgb r g b / 0), color(from var(--background) srgb r g b / 100) 60%)' }}
+                />
+                <div className="w-full max-w-190">
+                  <ChatInput onSend={handleSend} onStop={stop} status={status} ragEnabled={ragEnabled} onRagToggle={() => setRagEnabled((v) => !v)} />
+                </div>
+              </div>
+            </>
+          )}
+    </>
   )
 }
 
-export function ChatPage({ sidebar, chatId, initialMessages, sidebarDefaultOpen }: ChatPageProps) {
+export function ChatPage({ chatId, initialMessages }: ChatPageProps) {
   return (
     <StreamEventProvider>
-      <ChatPageInner sidebar={sidebar} chatId={chatId} initialMessages={initialMessages} sidebarDefaultOpen={sidebarDefaultOpen} />
+      <ChatPageInner chatId={chatId} initialMessages={initialMessages} />
     </StreamEventProvider>
   )
 }
