@@ -1,9 +1,7 @@
-import { cookies } from 'next/headers'
 import { notFound } from 'next/navigation'
 
 import { getMessagesByChatId, getChatById } from '@/db/chat-queries'
 import { ChatPage } from '@/features/chat/chat-page'
-import { AppSidebar } from '@/features/chat/components/app-sidebar'
 import { toUIMessages } from '@/features/chat/utils/to-ui-messages'
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -12,18 +10,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
   if (!chat) notFound()
 
-  const [messages, cookieStore] = await Promise.all([
-    getMessagesByChatId(id),
-    cookies(),
-  ])
-  const sidebarDefaultOpen = cookieStore.get('sidebar_state')?.value === 'true'
+  const messages = await getMessagesByChatId(id)
 
-  return (
-    <ChatPage
-      sidebar={<AppSidebar />}
-      chatId={id}
-      initialMessages={toUIMessages(messages)}
-      sidebarDefaultOpen={sidebarDefaultOpen}
-    />
-  )
+  return <ChatPage chatId={id} initialMessages={toUIMessages(messages)} />
 }
