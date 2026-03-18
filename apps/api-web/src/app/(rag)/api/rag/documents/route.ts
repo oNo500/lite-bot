@@ -7,7 +7,7 @@ import { ragDocument } from '@/db/schema'
 import { auth } from '@/lib/auth'
 import { ChatError } from '@/lib/errors'
 
-const SUPPORTED_MIME_TYPES = new Set(['text/plain', 'text/markdown', 'application/pdf'])
+const SUPPORTED_MIME_TYPES = new Set(['text/plain', 'text/markdown', 'application/pdf', 'application/json'])
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 
 export async function GET(_req: Request) {
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
   fetch(ingestUrl.toString(), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({ content, mimeType: file.type }),
   }).catch(() => {
     // Background task, ignore connection errors
   })

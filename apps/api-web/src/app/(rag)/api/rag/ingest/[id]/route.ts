@@ -10,7 +10,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params
-  const { content } = await req.json() as { content: string }
+  const { content, mimeType } = await req.json() as { content: string, mimeType: string }
 
   await db
     .update(ragDocument)
@@ -18,7 +18,11 @@ export async function POST(
     .where(eq(ragDocument.id, id))
 
   try {
-    const chunks = chunkText(content)
+    const chunks
+      = mimeType === 'application/json'
+        ? (JSON.parse(content) as unknown[]).map((record) => JSON.stringify(record))
+        : chunkText(content)
+
     const embeddings = await embedTexts(chunks)
 
     const chunkRows = chunks.map((text, i) => ({

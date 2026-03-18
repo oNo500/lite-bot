@@ -13,7 +13,7 @@ import {
   useSidebar,
 } from '@workspace/ui/components/sidebar'
 import { DefaultChatTransport } from 'ai'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 import { StreamEventProvider, useStreamEventDispatch } from '@/components/stream-event-provider'
 import { appPaths } from '@/config/app-paths'
@@ -104,15 +104,17 @@ function ChatPageInner({ sidebar, chatId, initialMessages, sidebarDefaultOpen = 
   const dispatch = useStreamEventDispatch()
   useChatTitleHandler()
   const [ragEnabled, setRagEnabled] = useState(false)
+  const ragEnabledRef = useRef(ragEnabled)
+  ragEnabledRef.current = ragEnabled
 
   const transport = useMemo(
     () => new DefaultChatTransport({
       api: '/api/chat',
       prepareSendMessagesRequest: ({ id, messages }) => ({
-        body: { chatId: id, messages, useRag: ragEnabled },
+        body: { chatId: id, messages, useRag: ragEnabledRef.current },
       }),
     }),
-    [ragEnabled],
+    [],
   )
 
   const { messages, sendMessage, stop, status } = useChat<AppUIMessage>({

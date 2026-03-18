@@ -6,8 +6,8 @@ import { toast } from 'sonner'
 
 import { useUploadDocument } from '../hooks/use-documents'
 
-const ACCEPTED_TYPES = new Set(['text/plain', 'text/markdown', 'application/pdf'])
-const ACCEPTED_EXTS = '.txt,.md,.pdf'
+const ACCEPTED_TYPES = new Set(['text/plain', 'text/markdown', 'application/pdf', 'application/json'])
+const ACCEPTED_EXTS = '.txt,.md,.pdf,.json'
 
 export function DocumentUpload() {
   const { mutateAsync: upload, isPending } = useUploadDocument()
@@ -70,7 +70,7 @@ export function DocumentUpload() {
         <p className="text-sm font-medium">
           {isPending ? '上传中...' : '拖拽文件或点击上传'}
         </p>
-        <p className="text-xs text-muted-foreground">支持 PDF、TXT、MD，最大 10MB</p>
+        <p className="text-xs text-muted-foreground">支持 PDF、TXT、MD、JSON，最大 10MB</p>
       </div>
     </div>
   )

@@ -72,6 +72,11 @@ Thumbs.db
 *.tmp
 *.temp
 
+# Local datasets
+apps/api-web/data/
+apps/api-web/scripts/*.json
+apps/api-web/scripts/*.txt
+
 .turbo
 .devtools/
 

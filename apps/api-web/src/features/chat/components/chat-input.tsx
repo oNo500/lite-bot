@@ -110,7 +110,7 @@ export function ChatInput({ onSend, onStop, status, ragEnabled = false, onRagTog
             onClick={onRagToggle}
             aria-label={ragEnabled ? '关闭知识库' : '开启知识库'}
             aria-pressed={ragEnabled}
-            className={ragEnabled ? 'text-primary' : ''}
+            variant={ragEnabled ? 'secondary' : 'ghost'}
           >
             <BookOpenIcon className="size-4" />
           </PromptInputButton>
