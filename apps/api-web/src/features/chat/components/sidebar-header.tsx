@@ -11,8 +11,8 @@ export function AppSidebarHeader() {
     <SidebarHeader>
       <SidebarMenu>
         <SidebarMenuItem>
-          <div className="flex items-center justify-between px-2 py-1 group-data-[collapsible=icon]:justify-center">
-            <Link href={appPaths.home.href} className="flex items-center gap-2 group-data-[collapsible=icon]:hidden">
+          <div className="flex items-center justify-between px-2 py-1">
+            <Link href={appPaths.home.href} className="flex items-center gap-2">
               <Logo />
               <span className="text-sm font-semibold">Lite Bot</span>
             </Link>
