@@ -12,7 +12,7 @@ export function AppSidebarHeader() {
       <SidebarMenu>
         <SidebarMenuItem>
           <div className="flex items-center justify-between px-2 py-1">
-            <Link href={appPaths.home.href} className="flex items-center gap-2">
+            <Link href={appPaths.chat.index.href} className="flex items-center gap-2">
               <Logo />
               <span className="text-sm font-semibold">Lite Bot</span>
             </Link>

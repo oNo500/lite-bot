@@ -37,7 +37,7 @@ export function MobileNav({ navItems }: { navItems: NavItem[] }) {
         <DrawerHeader className="border-b border-border">
           <DrawerTitle asChild>
             <Link
-              href={appPaths.home.href}
+              href={appPaths.chat.index.href}
               className="flex items-center gap-2 text-foreground"
             >
               <Logo />

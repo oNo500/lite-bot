@@ -6,6 +6,7 @@ import { toUIMessages } from '@/features/chat/utils/to-ui-messages'
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+
   const chat = await getChatById(id)
 
   if (!chat) notFound()

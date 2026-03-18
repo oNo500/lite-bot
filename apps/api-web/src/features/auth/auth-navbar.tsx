@@ -25,12 +25,12 @@ const navItems = [
   {
     label: 'Products',
     children: [
-      { label: 'API Platform', href: appPaths.home.href, description: 'Build and manage your APIs' },
-      { label: 'Analytics', href: appPaths.home.href, description: 'Insights and monitoring' },
+      { label: 'API Platform', href: appPaths.chat.index.href, description: 'Build and manage your APIs' },
+      { label: 'Analytics', href: appPaths.chat.index.href, description: 'Insights and monitoring' },
     ],
   },
-  { label: 'Docs', href: appPaths.home.href },
-  { label: 'Pricing', href: appPaths.home.href },
+  { label: 'Docs', href: appPaths.chat.index.href },
+  { label: 'Pricing', href: appPaths.chat.index.href },
 ]
 
 export function AuthNavbar() {
@@ -42,7 +42,7 @@ export function AuthNavbar() {
           {/* Left: logo + desktop nav */}
           <div className="flex items-center gap-6">
             <Link
-              href={appPaths.home.href}
+              href={appPaths.chat.index.href}
               className="flex items-center gap-2 text-foreground"
               aria-label={env.NEXT_PUBLIC_APP_NAME}
             >

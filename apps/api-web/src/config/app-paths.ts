@@ -1,9 +1,6 @@
 // Nextjs 集中式路由的唯一数据源
 
 export const appPaths = {
-  home: {
-    href: '/',
-  },
   auth: {
     signup: {
       getHref: (redirectTo?: string | null) =>
@@ -23,8 +20,8 @@ export const appPaths = {
     privacy: { href: '/privacy' },
   },
   chat: {
-    index: { href: '/chat' },
-    detail: { href: (id: string) => `/chat/${id}` },
+    index: { href: '/' },
+    detail: { href: (id: string) => `/${id}` },
   },
   rag: {
     index: { href: '/rag' },

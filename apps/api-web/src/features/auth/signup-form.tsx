@@ -49,7 +49,7 @@ export function SignupForm({
       return
     }
 
-    router.push(appPaths.home.href)
+    router.push(appPaths.chat.index.href)
   }
 
   return (
@@ -58,7 +58,7 @@ export function SignupForm({
         <FieldGroup>
           <div className="flex flex-col items-center gap-2 text-center">
             <a
-              href={appPaths.home.href}
+              href={appPaths.chat.index.href}
               className="flex flex-col items-center gap-2 font-medium"
             >
               <Logo />
