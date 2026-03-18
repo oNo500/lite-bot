@@ -13,12 +13,11 @@ import { Suspense } from 'react'
 import { appPaths } from '@/config/app-paths'
 
 import { ChatHistory } from './chat-history'
-import { NavSecondary } from './nav-secondary'
 import { AppSidebarHeader } from './sidebar-header'
 
 export function AppSidebar() {
   return (
-    <Sidebar collapsible="icon" className="border-r-0">
+    <Sidebar collapsible="offcanvas" className="border-r-0">
       <AppSidebarHeader />
       <SidebarGroup>
         <SidebarGroupContent>
@@ -35,7 +34,6 @@ export function AppSidebar() {
       <Suspense>
         <ChatHistory />
       </Suspense>
-      <NavSecondary className="mt-auto" />
     </Sidebar>
   )
 }

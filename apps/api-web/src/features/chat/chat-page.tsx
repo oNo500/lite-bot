@@ -7,7 +7,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from '@workspace/ui/components/breadcrumb'
-import { useSidebar } from '@workspace/ui/components/sidebar'
+import { SidebarTrigger, useSidebar } from '@workspace/ui/components/sidebar'
 import { DefaultChatTransport } from 'ai'
 import { useMemo, useRef, useState } from 'react'
 
@@ -19,6 +19,7 @@ import { appDataPartSchemas } from '@/lib/ai/stream-events'
 import { ChatInput } from './components/chat-input'
 import { ChatMessages } from './components/chat-messages'
 import { SuggestedActions } from './components/suggested-actions'
+import { UserMenu } from './components/user-menu'
 
 import type { AppUIMessage } from '@/lib/ai/stream-events'
 import type { FileUIPart, TextUIPart, UIMessage } from 'ai'
@@ -36,12 +37,8 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
   const ragEnabledRef = useRef(ragEnabled)
   ragEnabledRef.current = ragEnabled
 
-  const { state, isMobile } = useSidebar()
-  const sidebarLeft = isMobile
-    ? '0px'
-    : (state === 'expanded'
-        ? 'var(--sidebar-width)'
-        : 'var(--sidebar-width-icon)')
+  const { open, isMobile: isMobileSidebar } = useSidebar()
+  const contentLeft = open && !isMobileSidebar ? 'var(--sidebar-width)' : '0px'
 
   const transport = useMemo(
     () => new DefaultChatTransport({
@@ -73,9 +70,12 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
   return (
     <>
       <header
-        className="fixed top-0 right-0 z-9 flex h-14 items-center justify-center bg-background transition-[left] duration-200 ease-linear"
-        style={{ left: sidebarLeft }}
+        className="fixed top-0 right-0 z-9 flex h-14 items-center px-4 bg-background transition-[left] duration-200 ease-linear"
+        style={{ left: contentLeft }}
       >
+        <div className="flex flex-1 items-center">
+          {(!open || isMobileSidebar) && <SidebarTrigger />}
+        </div>
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -83,6 +83,9 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+        <div className="flex flex-1 items-center justify-end">
+          <UserMenu />
+        </div>
       </header>
       {messages.length === 0
         ? (
@@ -102,7 +105,7 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
               </div>
               <div
                 className="fixed right-0 bottom-0 z-9 flex justify-center bg-background transition-[left] duration-200 ease-linear"
-                style={{ left: sidebarLeft }}
+                style={{ left: contentLeft }}
               >
                 <div
                   aria-hidden
