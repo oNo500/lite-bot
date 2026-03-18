@@ -18,7 +18,7 @@ const SUGGESTIONS = [
 
 function PureSuggestedActions({ onSend }: SuggestedActionsProps) {
   return (
-    <div className="grid w-full gap-2 sm:grid-cols-2 mb-3">
+    <div className="mb-3 grid w-full gap-2 sm:grid-cols-2">
       {SUGGESTIONS.map((text, index) => (
         <motion.button
           key={text}
@@ -27,7 +27,7 @@ function PureSuggestedActions({ onSend }: SuggestedActionsProps) {
           transition={{ delay: 0.05 * index }}
           type="button"
           onClick={() => onSend([{ type: 'text', text }])}
-          className="h-auto w-full whitespace-normal rounded-xl border p-3 text-left text-sm hover:bg-muted transition-colors"
+          className="h-auto w-full rounded-xl border p-3 text-left text-sm whitespace-normal transition-colors hover:bg-muted"
         >
           {text}
         </motion.button>

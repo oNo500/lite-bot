@@ -57,7 +57,7 @@ export function ChatHistoryItem({ chat, onDelete }: ChatHistoryItemProps) {
           render={(
             <button
               type="button"
-              className="absolute right-1 top-1/2 -translate-y-1/2 rounded p-1 opacity-0 transition-opacity hover:text-destructive group-hover/item:opacity-100"
+              className="absolute top-1/2 right-1 -translate-y-1/2 rounded-sm p-1 opacity-0 transition-opacity group-hover/item:opacity-100 hover:text-destructive"
               aria-label="Delete chat"
             />
           )}

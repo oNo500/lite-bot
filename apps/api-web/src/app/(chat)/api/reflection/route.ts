@@ -1,4 +1,4 @@
-import { generateObject } from 'ai'
+import { generateText, Output } from 'ai'
 import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { treeifyError, z } from 'zod'
@@ -35,11 +35,11 @@ export async function POST(req: Request) {
   const { userMessage, assistantMessage } = parsed.data
   const prompt = buildReflectionPrompt({ userMessage, assistantMessage })
 
-  const { object } = await generateObject({
+  const { output } = await generateText({
     model,
-    schema: reflectionSchema,
     prompt,
+    output: Output.object({ schema: reflectionSchema }),
   })
 
-  return NextResponse.json(object)
+  return NextResponse.json(output)
 }

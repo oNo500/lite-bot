@@ -1,4 +1,3 @@
-import { generateObject } from 'ai'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 import { auth } from '@/lib/auth'
@@ -18,7 +17,8 @@ vi.mock('@/lib/auth', () => ({
 }))
 
 vi.mock('ai', () => ({
-  generateObject: vi.fn(),
+  generateText: vi.fn(),
+  Output: { object: vi.fn().mockReturnValue('mock-output-config') },
 }))
 
 vi.mock('@/lib/ai/provider', () => ({
@@ -30,7 +30,6 @@ vi.mock('./build-reflection-prompt', () => ({
 }))
 
 const mockAuth = vi.mocked(auth.api.getSession)
-const mockGenerateObject = vi.mocked(generateObject)
 
 function makeRequest(body: unknown) {
   return new Request('http://localhost/api/reflection', {
@@ -61,8 +60,9 @@ describe('pOST /api/reflection', () => {
 
   it('returns structured reflection object on success', async () => {
     mockAuth.mockResolvedValue({ user: { id: 'user-1' } } as never)
-    mockGenerateObject.mockResolvedValue({
-      object: { issues: [], confidence: 0.9, suggestion: undefined },
+    const { generateText } = await import('ai')
+    vi.mocked(generateText).mockResolvedValue({
+      output: { issues: [], confidence: 0.9, suggestion: undefined },
     } as never)
 
     const req = makeRequest({

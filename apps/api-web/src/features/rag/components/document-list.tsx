@@ -14,7 +14,7 @@ export function DocumentList() {
       <div className="divide-y">
         {(['a', 'b', 'c'] as const).map((k) => (
           <div key={k} className="flex items-center gap-3 px-4 py-3">
-            <Skeleton className="size-4 rounded" />
+            <Skeleton className="size-4 rounded-sm" />
             <div className="flex-1 space-y-1.5">
               <Skeleton className="h-4 w-48" />
               <Skeleton className="h-3 w-16" />

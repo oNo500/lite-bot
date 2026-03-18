@@ -49,7 +49,6 @@ import {
 } from 'lucide-react'
 import { nanoid } from 'nanoid'
 import {
-  Children,
   createContext,
   useCallback,
   use,
@@ -65,13 +64,13 @@ import type {
   ChangeEventHandler,
   ClipboardEventHandler,
   ComponentProps,
-  FormEvent,
-  FormEventHandler,
+  EventHandler,
   HTMLAttributes,
   KeyboardEventHandler,
   PropsWithChildren,
   ReactNode,
   RefObject,
+  SyntheticEvent,
 } from 'react'
 
 // ============================================================================
@@ -126,7 +125,7 @@ export interface PromptInputControllerProps {
   ) => void
 }
 
-const PromptInputController = createContext<PromptInputControllerProps | null>(
+const PromptInputControllerContext = createContext<PromptInputControllerProps | null>(
   null,
 )
 const ProviderAttachmentsContext = createContext<AttachmentsContext | null>(
@@ -134,7 +133,7 @@ const ProviderAttachmentsContext = createContext<AttachmentsContext | null>(
 )
 
 export const usePromptInputController = () => {
-  const ctx = use(PromptInputController)
+  const ctx = use(PromptInputControllerContext)
   if (!ctx) {
     throw new Error(
       'Wrap your component inside <PromptInputProvider> to use usePromptInputController().',
@@ -145,7 +144,7 @@ export const usePromptInputController = () => {
 
 // Optional variants (do NOT throw). Useful for dual-mode components.
 const useOptionalPromptInputController = () =>
-  use(PromptInputController)
+  use(PromptInputControllerContext)
 
 export const useProviderAttachments = () => {
   const ctx = use(ProviderAttachmentsContext)
@@ -280,11 +279,11 @@ export const PromptInputProvider = ({
   )
 
   return (
-    <PromptInputController.Provider value={controller}>
+    <PromptInputControllerContext value={controller}>
       <ProviderAttachmentsContext value={attachments}>
         {children}
       </ProviderAttachmentsContext>
-    </PromptInputController.Provider>
+    </PromptInputControllerContext>
   )
 }
 
@@ -387,7 +386,7 @@ export type PromptInputProps = Omit<
   }) => void
   onSubmit: (
     message: PromptInputMessage,
-    event: FormEvent<HTMLFormElement>,
+    event: SyntheticEvent<HTMLFormElement>,
   ) => void | Promise<void>
 }
 
@@ -725,7 +724,7 @@ export const PromptInput = ({
   )
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  const handleSubmit: FormEventHandler<HTMLFormElement> = useCallback(
+  const handleSubmit: EventHandler<SyntheticEvent<HTMLFormElement>> = useCallback(
     async (event) => {
       event.preventDefault()
 
@@ -805,7 +804,7 @@ export const PromptInput = ({
         ref={formRef}
         {...props}
       >
-        <InputGroup className="overflow-hidden border-none shadow-none p-2 rounded-4xl">{children}</InputGroup>
+        <InputGroup className="overflow-hidden rounded-4xl border-none p-2 shadow-none">{children}</InputGroup>
       </form>
     </>
   )
@@ -1016,7 +1015,7 @@ export const PromptInputButton = ({
   ...props
 }: PromptInputButtonProps) => {
   const newSize
-    = size ?? (Children.count(props.children) > 1 ? 'sm' : 'icon-sm')
+    = size ?? (Array.isArray(props.children) && props.children.length > 1 ? 'sm' : 'icon-sm')
 
   const button = (
     <InputGroupButton
@@ -1262,7 +1261,7 @@ export const PromptInputTabLabel = ({
   // oxlint-disable-next-line eslint-plugin-jsx-a11y(heading-has-content)
   <h3
     className={cn(
-      'mb-2 px-3 font-medium text-muted-foreground text-xs',
+      'mb-2 px-3 text-xs font-medium text-muted-foreground',
       className,
     )}
     {...props}

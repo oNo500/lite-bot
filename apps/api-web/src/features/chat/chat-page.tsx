@@ -73,7 +73,7 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
   return (
     <>
       <header
-        className="fixed top-0 right-0 z-[9] flex h-14 items-center justify-center bg-background transition-[left] duration-200 ease-linear"
+        className="fixed top-0 right-0 z-9 flex h-14 items-center justify-center bg-background transition-[left] duration-200 ease-linear"
         style={{ left: sidebarLeft }}
       >
         <Breadcrumb>
@@ -101,12 +101,12 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
                 </div>
               </div>
               <div
-                className="fixed right-0 bottom-0 z-[9] flex justify-center bg-background transition-[left] duration-200 ease-linear"
+                className="fixed right-0 bottom-0 z-9 flex justify-center bg-background transition-[left] duration-200 ease-linear"
                 style={{ left: sidebarLeft }}
               >
                 <div
                   aria-hidden
-                  className="absolute -top-[50px] bottom-0 start-0 z-[-1] h-[100px] w-full pointer-events-none"
+                  className="pointer-events-none absolute inset-s-0 -top-[50px] bottom-0 z-[-1] h-[100px] w-full"
                   style={{ background: 'linear-gradient(180deg, color(from var(--background) srgb r g b / 0), color(from var(--background) srgb r g b / 100) 60%)' }}
                 />
                 <div className="w-full max-w-190">

@@ -14,6 +14,9 @@ const appConfig: Linter.Config[] = defineConfig({
     react: true,
     unicorn: true,
     stylistic: true,
+    tailwind: {
+      entryPoint: 'src/styles/globals.css',
+    },
   }),
 })
 const vitestConfig: Linter.Config[] = defineConfig({

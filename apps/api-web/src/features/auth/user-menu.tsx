@@ -91,9 +91,9 @@ export function UserMenu({ variant }: { variant: 'desktop' | 'mobile' }) {
         )}
       />
       <DropdownMenuContent align="end">
-        <div className="px-2 py-1.5 text-sm max-w-48">
-          <div className="font-medium truncate">{session.user.name}</div>
-          <div className="text-muted-foreground truncate">{session.user.email}</div>
+        <div className="max-w-48 px-2 py-1.5 text-sm">
+          <div className="truncate font-medium">{session.user.name}</div>
+          <div className="truncate text-muted-foreground">{session.user.email}</div>
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut}>

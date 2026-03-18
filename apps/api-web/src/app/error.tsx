@@ -18,10 +18,10 @@ export default function ErrorPage({
       <div className="max-w-md space-y-6">
         <div className="space-y-2">
           <p className="text-sm font-medium text-muted-foreground">Error</p>
-          <h1 className="text-balance text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="text-3xl font-bold tracking-tight text-balance text-foreground">
             Something went wrong
           </h1>
-          <p className="text-pretty text-sm text-muted-foreground">
+          <p className="text-sm text-pretty text-muted-foreground">
             {error.message || 'An unexpected error occurred.'}
           </p>
         </div>

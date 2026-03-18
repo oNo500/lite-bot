@@ -90,7 +90,7 @@ export function AuthNavbar() {
           </div>
 
           {/* Desktop: right side */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden items-center gap-2 md:flex">
             <Button
               render={<a href="https://github.com/oNo500/base" target="_blank" rel="noopener noreferrer" />}
               nativeButton={false}
