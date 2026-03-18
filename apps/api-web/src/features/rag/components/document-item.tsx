@@ -27,9 +27,9 @@ export function DocumentItem({ doc }: { doc: RagDocument }) {
   const sizeKb = (doc.size / 1024).toFixed(1)
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3 border-b last:border-b-0 hover:bg-muted/30 transition-colors">
-      <FileTextIcon className="size-4 text-muted-foreground shrink-0" />
-      <div className="flex-1 min-w-0">
+    <div className="flex items-center gap-3 border-b px-4 py-3 transition-colors last:border-b-0 hover:bg-muted/30">
+      <FileTextIcon className="size-4 shrink-0 text-muted-foreground" />
+      <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{doc.name}</p>
         <p className="text-xs text-muted-foreground">
           {sizeKb}
@@ -37,7 +37,7 @@ export function DocumentItem({ doc }: { doc: RagDocument }) {
           KB
         </p>
       </div>
-      <div className="flex items-center gap-2 shrink-0">
+      <div className="flex shrink-0 items-center gap-2">
         {isProcessing && <Loader2Icon className="size-3.5 animate-spin text-muted-foreground" />}
         <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_CLASS[doc.status]}`}>
           {STATUS_LABEL[doc.status]}

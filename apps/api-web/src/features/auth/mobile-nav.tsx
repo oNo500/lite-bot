@@ -50,14 +50,14 @@ export function MobileNav({ navItems }: { navItems: NavItem[] }) {
             item.children
               ? (
                   <div key={item.label} className="flex flex-col gap-1">
-                    <span className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    <span className="px-2 py-1.5 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                       {item.label}
                     </span>
                     {item.children.map((child) => (
                       <DrawerClose key={child.label} asChild>
                         <Link
                           href={child.href}
-                          className="rounded-lg px-2 py-1.5 text-sm hover:bg-muted transition-colors"
+                          className="rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-muted"
                         >
                           {child.label}
                         </Link>
@@ -69,7 +69,7 @@ export function MobileNav({ navItems }: { navItems: NavItem[] }) {
                   <DrawerClose key={item.label} asChild>
                     <Link
                       href={item.href!}
-                      className="rounded-lg px-2 py-1.5 text-sm hover:bg-muted transition-colors"
+                      className="rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-muted"
                     >
                       {item.label}
                     </Link>

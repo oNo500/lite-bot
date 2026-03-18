@@ -55,7 +55,7 @@ function FilePreview() {
   return (
     <div className="flex flex-wrap gap-2 px-3 pt-3">
       {files.map((file) => (
-        <div key={file.id} className="relative size-16 rounded-md overflow-hidden border bg-muted">
+        <div key={file.id} className="relative size-16 overflow-hidden rounded-md border bg-muted">
           <Image src={file.url} alt={file.filename ?? 'attachment'} width={64} height={64} className="size-full object-cover" unoptimized />
           <button
             type="button"

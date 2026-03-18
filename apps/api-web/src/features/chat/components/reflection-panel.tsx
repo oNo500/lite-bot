@@ -27,7 +27,7 @@ export function ReflectionPanel({ state }: Props) {
 
   if (state.status === 'loading') {
     return (
-      <div className="flex items-center gap-1.5 mt-1 ml-1 text-xs text-muted-foreground">
+      <div className="mt-1 ml-1 flex items-center gap-1.5 text-xs text-muted-foreground">
         <Loader2 className="size-3 animate-spin" />
         <span>自检中...</span>
       </div>
@@ -49,10 +49,10 @@ export function ReflectionPanel({ state }: Props) {
   const confidencePct = Math.round(result.confidence * 100)
 
   return (
-    <div className="mt-1 ml-1 text-xs border border-border/50 rounded-md overflow-hidden">
+    <div className="mt-1 ml-1 overflow-hidden rounded-md border border-border/50 text-xs">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center gap-1.5 px-2 py-1.5 text-left hover:bg-muted/50 transition-colors"
+        className="flex w-full items-center gap-1.5 px-2 py-1.5 text-left transition-colors hover:bg-muted/50"
       >
         {open ? <ChevronDown className="size-3 shrink-0" /> : <ChevronRight className="size-3 shrink-0" />}
         <span className="font-medium text-muted-foreground">AI 自检</span>
@@ -63,18 +63,18 @@ export function ReflectionPanel({ state }: Props) {
           %
         </span>
         {hasIssues
-          ? <AlertTriangle className="size-3 text-amber-500 shrink-0" />
-          : <CheckCircle className="size-3 text-emerald-500 shrink-0" />}
+          ? <AlertTriangle className="size-3 shrink-0 text-amber-500" />
+          : <CheckCircle className="size-3 shrink-0 text-emerald-500" />}
       </button>
 
       {open && (
-        <div className="px-3 py-2 border-t border-border/50 space-y-2">
+        <div className="space-y-2 border-t border-border/50 px-3 py-2">
           {hasIssues
             ? (
                 <ul className="space-y-1">
                   {result.issues.map((issue) => (
                     <li key={issue} className={cn('flex gap-1.5', 'text-amber-600 dark:text-amber-400')}>
-                      <AlertTriangle className="size-3 mt-0.5 shrink-0" />
+                      <AlertTriangle className="mt-0.5 size-3 shrink-0" />
                       <span>{issue}</span>
                     </li>
                   ))}
@@ -82,12 +82,12 @@ export function ReflectionPanel({ state }: Props) {
               )
             : (
                 <p className="flex gap-1.5 text-emerald-600 dark:text-emerald-400">
-                  <CheckCircle className="size-3 mt-0.5 shrink-0" />
+                  <CheckCircle className="mt-0.5 size-3 shrink-0" />
                   <span>未发现问题</span>
                 </p>
               )}
           {result.suggestion && (
-            <p className="text-muted-foreground border-t border-border/50 pt-2">
+            <p className="border-t border-border/50 pt-2 text-muted-foreground">
               {result.suggestion}
             </p>
           )}
