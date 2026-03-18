@@ -135,7 +135,15 @@ function ChatPageInner({ sidebar, chatId, initialMessages, sidebarDefaultOpen = 
   }
 
   return (
-    <SidebarProvider defaultOpen={sidebarDefaultOpen}>
+    <SidebarProvider
+      style={
+        {
+          '--sidebar-width': '20rem',
+          '--sidebar-width-mobile': '20rem',
+        } as React.CSSProperties
+      }
+      defaultOpen={sidebarDefaultOpen}
+    >
       {sidebar}
       <ChatLayout
         messages={messages}

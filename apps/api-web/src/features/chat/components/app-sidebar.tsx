@@ -37,7 +37,7 @@ export function AppSidebar() {
         <ChatHistory />
       </Suspense>
       <NavSecondary className="mt-auto" />
-      <SidebarRail />
+      {/* <SidebarRail /> */}
     </Sidebar>
   )
 }
