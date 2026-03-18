@@ -70,7 +70,7 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
   return (
     <>
       <header
-        className="fixed top-0 right-0 z-9 flex h-14 items-center px-4 bg-background transition-[left] duration-200 ease-linear"
+        className="fixed top-0 right-0 z-9 flex h-14 items-center bg-background px-4 transition-[left] duration-200 ease-linear"
         style={{ left: contentLeft }}
       >
         <div className="flex flex-1 items-center">
@@ -90,7 +90,7 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
       {messages.length === 0
         ? (
             <div className="flex min-h-svh items-center justify-center pt-14">
-              <div className="w-full max-w-[760px]">
+              <div className="w-full max-w-190">
                 <SuggestedActions onSend={handleSend} />
                 <ChatInput onSend={handleSend} onStop={stop} status={status} ragEnabled={ragEnabled} onRagToggle={() => setRagEnabled((v) => !v)} />
               </div>
@@ -109,7 +109,7 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
               >
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute inset-s-0 -top-[50px] bottom-0 z-[-1] h-[100px] w-full"
+                  className="pointer-events-none absolute inset-s-0 -top-12.5 bottom-0 z-[-1] h-25 w-full"
                   style={{ background: 'linear-gradient(180deg, color(from var(--background) srgb r g b / 0), color(from var(--background) srgb r g b / 100) 60%)' }}
                 />
                 <div className="w-full max-w-190">

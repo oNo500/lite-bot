@@ -16,8 +16,10 @@ const appConfig: Linter.Config[] = defineConfig({
     stylistic: true,
     tailwind: {
       entryPoint: 'src/styles/globals.css',
+      rootFontSize: 16,
     },
   }),
+
 })
 const vitestConfig: Linter.Config[] = defineConfig({
   files: GLOB_TESTS,
