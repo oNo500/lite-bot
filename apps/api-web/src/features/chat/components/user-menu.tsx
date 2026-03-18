@@ -14,8 +14,8 @@ import {
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu'
 import { HelpCircleIcon, LaptopIcon, LogOutIcon, MoonIcon, PaletteIcon, Settings2Icon, SunIcon } from 'lucide-react'
-import { useTheme } from 'next-themes'
 import { useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes'
 
 import { appPaths } from '@/config/app-paths'
 import { authClient } from '@/lib/auth-client'
@@ -28,10 +28,10 @@ function getInitials(name: string, email?: string): string {
     if (parts.length >= 2 && first && last) {
       return `${first[0]}${last[0]}`.toUpperCase()
     }
-    return name.substring(0, 2).toUpperCase()
+    return name.slice(0, 2).toUpperCase()
   }
   if (email) {
-    return email.split('@')[0]?.substring(0, 2).toUpperCase() ?? 'U'
+    return email.split('@')[0]?.slice(0, 2).toUpperCase() ?? 'U'
   }
   return 'U'
 }
@@ -63,8 +63,8 @@ export function UserMenu() {
         <DropdownMenuGroup>
           <DropdownMenuLabel>
             <div className="flex flex-col gap-0.5">
-              <span className="text-sm font-medium truncate">{name}</span>
-              <span className="text-xs text-muted-foreground truncate">{email}</span>
+              <span className="truncate text-sm font-medium">{name}</span>
+              <span className="truncate text-xs text-muted-foreground">{email}</span>
             </div>
           </DropdownMenuLabel>
         </DropdownMenuGroup>
