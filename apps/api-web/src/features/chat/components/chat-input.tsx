@@ -53,7 +53,7 @@ function FilePreview() {
   const { files, remove } = usePromptInputAttachments()
   if (files.length === 0) return null
   return (
-    <div className="flex flex-wrap gap-2 px-3 pt-3">
+    <div className="flex w-full flex-wrap gap-2 px-3 pt-3">
       {files.map((file) => (
         <div key={file.id} className="relative size-16 overflow-hidden rounded-md border bg-muted">
           <Image src={file.url} alt={file.filename ?? 'attachment'} width={64} height={64} className="size-full object-cover" unoptimized />
