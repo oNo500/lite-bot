@@ -1,35 +1,30 @@
 'use client'
 
 import {
-  SidebarGroup,
-  SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@workspace/ui/components/sidebar'
-import { HelpCircleIcon, Settings2Icon } from 'lucide-react'
-import React from 'react'
+import { BookOpenIcon, HelpCircleIcon } from 'lucide-react'
+import Link from 'next/link'
 
-const items = [
-  { title: 'Settings', icon: <Settings2Icon />, url: '#' },
-  { title: 'Help', icon: <HelpCircleIcon />, url: '#' },
-]
+import { appPaths } from '@/config/app-paths'
 
-export function NavSecondary(props: React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+export function NavSecondary() {
   return (
-    <SidebarGroup {...props}>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton render={<a href={item.url} />} tooltip={item.title}>
-                {item.icon}
-                <span>{item.title}</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <SidebarMenuButton render={<Link href={appPaths.rag.index.href} />} tooltip="知识库">
+          <BookOpenIcon />
+          <span>知识库</span>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      <SidebarMenuItem>
+        <SidebarMenuButton tooltip="帮助">
+          <HelpCircleIcon />
+          <span>帮助</span>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    </SidebarMenu>
   )
 }

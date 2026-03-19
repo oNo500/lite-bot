@@ -1,5 +1,6 @@
 import {
   Sidebar,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
@@ -13,6 +14,7 @@ import { Suspense } from 'react'
 import { appPaths } from '@/config/app-paths'
 
 import { ChatHistory } from './chat-history'
+import { NavSecondary } from './nav-secondary'
 import { AppSidebarHeader } from './sidebar-header'
 
 export function AppSidebar() {
@@ -34,6 +36,9 @@ export function AppSidebar() {
       <Suspense>
         <ChatHistory />
       </Suspense>
+      <SidebarFooter>
+        <NavSecondary />
+      </SidebarFooter>
     </Sidebar>
   )
 }
