@@ -2,6 +2,7 @@
 
 import { SidebarTrigger, useSidebar } from '@workspace/ui/components/sidebar'
 import dynamic from 'next/dynamic'
+
 import type { ReactNode } from 'react'
 
 const UserMenu = dynamic(() => import('./user-menu').then((m) => m.UserMenu), { ssr: false })

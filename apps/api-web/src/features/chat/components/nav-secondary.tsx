@@ -5,7 +5,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@workspace/ui/components/sidebar'
-import { BookOpenIcon, HelpCircleIcon } from 'lucide-react'
+import { BookOpenIcon } from 'lucide-react'
 import Link from 'next/link'
 
 import { appPaths } from '@/config/app-paths'
@@ -17,12 +17,6 @@ export function NavSecondary() {
         <SidebarMenuButton render={<Link href={appPaths.rag.index.href} />} tooltip="知识库">
           <BookOpenIcon />
           <span>知识库</span>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-      <SidebarMenuItem>
-        <SidebarMenuButton tooltip="帮助">
-          <HelpCircleIcon />
-          <span>帮助</span>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>
