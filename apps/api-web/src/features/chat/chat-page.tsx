@@ -9,8 +9,10 @@ import {
 } from '@workspace/ui/components/breadcrumb'
 import { SidebarTrigger, useSidebar } from '@workspace/ui/components/sidebar'
 import { DefaultChatTransport } from 'ai'
+import dynamic from 'next/dynamic'
 import { useMemo, useRef, useState } from 'react'
 
+import { PromptInputProvider } from '@/components/ai-elements/prompt-input'
 import { StreamEventProvider, useStreamEventDispatch } from '@/components/stream-event-provider'
 import { appPaths } from '@/config/app-paths'
 import { useChatTitleHandler } from '@/lib/ai/stream-event-handlers'
@@ -19,7 +21,8 @@ import { appDataPartSchemas } from '@/lib/ai/stream-events'
 import { ChatInput } from './components/chat-input'
 import { ChatMessages } from './components/chat-messages'
 import { SuggestedActions } from './components/suggested-actions'
-import { UserMenu } from './components/user-menu'
+
+const UserMenu = dynamic(() => import('./components/user-menu').then((m) => m.UserMenu), { ssr: false })
 
 import type { AppUIMessage } from '@/lib/ai/stream-events'
 import type { FileUIPart, TextUIPart, UIMessage } from 'ai'
@@ -63,8 +66,6 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
     },
   })
 
-  console.log('messages', JSON.stringify(messages, null, 4))
-
   function handleSend(parts: (TextUIPart | FileUIPart)[]) {
     void sendMessage({ parts })
   }
@@ -93,8 +94,10 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
         ? (
             <div className="flex min-h-svh items-center justify-center pt-14">
               <div className="w-full max-w-190">
-                <SuggestedActions onSend={handleSend} />
-                <ChatInput onSend={handleSend} onStop={stop} status={status} ragEnabled={ragEnabled} onRagToggle={() => setRagEnabled((v) => !v)} />
+                <PromptInputProvider>
+                  <ChatInput onSend={handleSend} onStop={stop} status={status} ragEnabled={ragEnabled} onRagToggle={() => setRagEnabled((v) => !v)} />
+                  <SuggestedActions onSend={handleSend} />
+                </PromptInputProvider>
               </div>
             </div>
           )
