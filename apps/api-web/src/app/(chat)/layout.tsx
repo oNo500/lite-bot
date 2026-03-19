@@ -6,6 +6,7 @@ import { headers, cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 import { appPaths } from '@/config/app-paths'
+import { AppHeader } from '@/features/chat/components/app-header'
 import { AppSidebar } from '@/features/chat/components/app-sidebar'
 import { auth } from '@/lib/auth'
 
@@ -27,7 +28,10 @@ export default async function ChatLayout({ children }: { children: ReactNode }) 
       style={{ '--sidebar-width': '20rem', '--sidebar-width-mobile': '20rem' } as CSSProperties}
     >
       <AppSidebar />
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset className="pt-14">
+        <AppHeader />
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   )
 }
