@@ -5,8 +5,7 @@
   "private": true,
   "scripts": {
     "generate": "svgr --no-prettier --out-dir src/icons -- src/svg",
-    "build": "tsdown",
-    "typecheck": "tsc --noEmit"
+    "build": "tsdown"
   },
   "exports": {
     ".": "./src/index.ts"
