@@ -31,7 +31,7 @@ export const appPaths = {
       upload: { href: '/api/files/upload' },
     },
     history: { href: '/api/history' },
-    reflection: { href: '/api/reflection' },
+
     rag: {
       documents: { href: '/api/rag/documents' },
       document: { href: (id: string) => `/api/rag/documents/${id}` },

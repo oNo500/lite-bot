@@ -1,8 +1,8 @@
 'use client'
 
-import { CopyIcon, ScanSearch } from 'lucide-react'
+import { CopyIcon } from 'lucide-react'
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 import {
   Message,
@@ -11,87 +11,30 @@ import {
   MessageContent,
   MessageResponse,
 } from '@/components/ai-elements/message'
-import { appPaths } from '@/config/app-paths'
 import { MessageEvalButtons } from '@/features/chat/components/message-eval-buttons'
-import { ReflectionPanel } from '@/features/chat/components/reflection-panel'
 
-import type { ReflectionResult } from '@/features/chat/components/reflection-panel'
 import type { DynamicToolUIPart, UIMessage } from 'ai'
 
 import 'streamdown/styles.css'
 
-type ReflectionState
-  = | { status: 'idle' }
-    | { status: 'loading' }
-    | { status: 'done', result: ReflectionResult }
-    | { status: 'error', message: string }
-
-function AssistantActions({ message, messages }: { message: UIMessage, messages: UIMessage[] }) {
-  const [reflectionState, setReflectionState] = useState<ReflectionState>({ status: 'idle' })
-
-  async function handleReflect() {
-    if (reflectionState.status === 'loading') return
-
-    const assistantText = message.parts
-      .filter((p) => p.type === 'text')
-      .map((p) => (p as { type: 'text', text: string }).text)
-      .join('')
-
-    // Find the user message just before this assistant message
-    const msgIndex = messages.findIndex((m) => m.id === message.id)
-    const userMsg = messages.slice(0, msgIndex).findLast((m) => m.role === 'user')
-    const userText = userMsg?.parts
-      .filter((p) => p.type === 'text')
-      .map((p) => (p as { type: 'text', text: string }).text)
-      .join('') ?? ''
-
-    setReflectionState({ status: 'loading' })
-    try {
-      const res = await fetch(appPaths.api.reflection.href, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messageId: message.id,
-          userMessage: userText,
-          assistantMessage: assistantText,
-        }),
-      })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const result = await res.json() as ReflectionResult
-      setReflectionState({ status: 'done', result })
-    } catch (error) {
-      setReflectionState({ status: 'error', message: error instanceof Error ? error.message : 'Unknown error' })
-    }
-  }
-
+function AssistantActions({ message }: { message: UIMessage, messages: UIMessage[] }) {
   return (
-    <>
-      <MessageActions className="mt-1 ml-1">
-        <MessageAction
-          onClick={() => {
-            const text = message.parts
-              .filter((p) => p.type === 'text')
-              .map((p) => (p as { type: 'text', text: string }).text)
-              .join('')
-            void navigator.clipboard.writeText(text)
-          }}
-          tooltip="Copy"
-          label="Copy message"
-        >
-          <CopyIcon className="size-3" />
-        </MessageAction>
-        <MessageEvalButtons messageId={message.id} />
-        <MessageAction
-          onClick={() => void handleReflect()}
-          tooltip="自检"
-          label="Reflect on this response"
-          disabled={reflectionState.status === 'loading'}
-        >
-          <ScanSearch className="size-3" />
-        </MessageAction>
-      </MessageActions>
-      <ReflectionPanel state={reflectionState} />
-    </>
+    <MessageActions className="mt-1 ml-1">
+      <MessageAction
+        onClick={() => {
+          const text = message.parts
+            .filter((p) => p.type === 'text')
+            .map((p) => (p as { type: 'text', text: string }).text)
+            .join('')
+          void navigator.clipboard.writeText(text)
+        }}
+        tooltip="Copy"
+        label="Copy message"
+      >
+        <CopyIcon className="size-3" />
+      </MessageAction>
+      <MessageEvalButtons messageId={message.id} />
+    </MessageActions>
   )
 }
 
