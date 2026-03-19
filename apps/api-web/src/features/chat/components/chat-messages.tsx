@@ -11,6 +11,7 @@ import {
   MessageContent,
   MessageResponse,
 } from '@/components/ai-elements/message'
+import { Shimmer } from '@/components/ai-elements/shimmer'
 import { MessageEvalButtons } from '@/features/chat/components/message-eval-buttons'
 
 import type { DynamicToolUIPart, UIMessage } from 'ai'
@@ -129,13 +130,7 @@ export function ChatMessages({ messages, status }: { messages: UIMessage[], stat
           )}
         </div>
       ))}
-      {showLoading && (
-        <div className="flex gap-1 px-4">
-          <span className="inline-block size-1.5 animate-bounce rounded-full bg-muted-foreground/50 [animation-delay:-0.3s]" />
-          <span className="inline-block size-1.5 animate-bounce rounded-full bg-muted-foreground/50 [animation-delay:-0.15s]" />
-          <span className="inline-block size-1.5 animate-bounce rounded-full bg-muted-foreground/50" />
-        </div>
-      )}
+      {showLoading && <Shimmer className="px-4 text-sm">Thinking...</Shimmer>}
       <div ref={bottomRef} />
     </div>
   )
