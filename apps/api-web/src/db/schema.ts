@@ -1,5 +1,7 @@
 import { relations } from 'drizzle-orm'
-import { pgTable, text, timestamp, boolean, index, uuid, varchar, json, integer, unique, vector } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean, index, uuid, varchar, json, jsonb, integer, unique, vector } from 'drizzle-orm/pg-core'
+
+import type { ChunkConfig } from '@/lib/rag/types'
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -157,6 +159,8 @@ export const ragDocument = pgTable('rag_document', {
   size: integer('size').notNull(),
   status: varchar('status', { enum: ['pending', 'processing', 'ready', 'error'] }).default('pending').notNull(),
   errorMessage: text('error_message'),
+  rawContent: text('raw_content'),
+  chunkConfig: jsonb('chunk_config').$type<ChunkConfig>().default({ strategy: 'fixed', size: 512, overlap: 64 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
 })
@@ -165,8 +169,13 @@ export const ragChunk = pgTable('rag_chunk', {
   id: uuid('id').primaryKey().defaultRandom(),
   documentId: uuid('document_id').notNull().references(() => ragDocument.id, { onDelete: 'cascade' }),
   content: text('content').notNull(),
+  editedContent: text('edited_content'),
   embedding: vector('embedding', { dimensions: 1536 }),
   chunkIndex: integer('chunk_index').notNull(),
+  charStart: integer('char_start').notNull(),
+  charEnd: integer('char_end').notNull(),
+  tokenCount: integer('token_count').notNull(),
+  enabled: boolean('enabled').notNull().default(true),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 }, (table) => [
   index('rag_chunk_embedding_idx').using('hnsw', table.embedding.op('vector_cosine_ops')),
