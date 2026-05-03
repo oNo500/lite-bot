@@ -35,5 +35,14 @@ export const POST = withErrorHandler(withAuth(async (req, { auth }) => {
   const userId = isAnonymous ? undefined : auth.session.user.id
   const chatId = isAnonymous ? undefined : parsed.chatId
 
-  return streamChat({ flow: DEFAULT_FLOW, messages, query, userId, chatId })
+  const flow = parsed.useRag === false
+    ? {
+        ...DEFAULT_FLOW,
+        capabilities: DEFAULT_FLOW.capabilities.map((e) =>
+          e.capability.id === 'rag' ? { ...e, enabled: false } : e,
+        ),
+      }
+    : DEFAULT_FLOW
+
+  return streamChat({ flow, messages, query, userId, chatId })
 }))

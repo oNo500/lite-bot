@@ -1,49 +1,15 @@
-import { eq } from 'drizzle-orm'
+import { ingestBodySchema, documentIdParamsSchema } from '@/features/rag/lib/validators'
+import { ingestDocument } from '@/features/rag/mutations/ingest-document'
+import { withAuth } from '@/lib/api/with-auth'
+import { withErrorHandler } from '@/lib/api/with-error-handler'
 
-import { db } from '@/db/index'
-import { ragChunk, ragDocument } from '@/db/schema'
-import { chunkText } from '@/lib/rag/chunk'
-import { embedTexts } from '@/lib/rag/embed'
+export const POST = withErrorHandler(
+  withAuth<{ id: string }>(async (req, { params }) => {
+    const { id } = documentIdParamsSchema.parse(await params)
+    const { content, mimeType } = ingestBodySchema.parse(await req.json())
 
-export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  const { id } = await params
-  const { content, mimeType } = await req.json() as { content: string, mimeType: string }
+    await ingestDocument({ documentId: id, content, mimeType })
 
-  await db
-    .update(ragDocument)
-    .set({ status: 'processing' })
-    .where(eq(ragDocument.id, id))
-
-  try {
-    const chunks
-      = mimeType === 'application/json'
-        ? (JSON.parse(content) as unknown[]).map((record) => JSON.stringify(record))
-        : chunkText(content)
-
-    const embeddings = await embedTexts(chunks)
-
-    const chunkRows = chunks.map((text, i) => ({
-      documentId: id,
-      content: text,
-      embedding: embeddings[i]!,
-      chunkIndex: i,
-    }))
-
-    await db.insert(ragChunk).values(chunkRows)
-    await db
-      .update(ragDocument)
-      .set({ status: 'ready' })
-      .where(eq(ragDocument.id, id))
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error'
-    await db
-      .update(ragDocument)
-      .set({ status: 'error', errorMessage: message })
-      .where(eq(ragDocument.id, id))
-  }
-
-  return new Response(null, { status: 204 })
-}
+    return new Response(null, { status: 204 })
+  }),
+)
