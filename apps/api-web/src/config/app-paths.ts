@@ -25,6 +25,10 @@ export const appPaths = {
   },
   rag: {
     index: { href: '/rag' },
+    detail: {
+      href: (documentId: string, highlightChunkId?: string) =>
+        `/rag/${documentId}${highlightChunkId ? `?highlight=${highlightChunkId}` : ''}`,
+    },
   },
   capabilities: {
     index: { href: '/capabilities' },
