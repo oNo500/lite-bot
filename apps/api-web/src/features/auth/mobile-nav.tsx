@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { Button } from '@workspace/ui/components/button'
+import { Button } from "@workspace/ui/components/button";
 import {
   Drawer,
   DrawerClose,
@@ -8,22 +8,22 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@workspace/ui/components/drawer'
-import { Separator } from '@workspace/ui/components/separator'
-import { Menu } from 'lucide-react'
-import Link from 'next/link'
+} from "@workspace/ui/components/drawer";
+import { Separator } from "@workspace/ui/components/separator";
+import { Menu } from "lucide-react";
+import Link from "next/link";
 
-import { Logo } from '@/components/logo'
-import { appPaths } from '@/config/app-paths'
-import { env } from '@/config/env'
+import { Logo } from "@/components/logo";
+import { appPaths } from "@/config/app-paths";
+import { env } from "@/config/env";
 
-import { UserMenu } from './user-menu'
+import { UserMenu } from "./user-menu";
 
 type NavItem = {
-  label: string
-  href?: string
-  children?: { label: string, href: string }[]
-}
+  label: string;
+  href?: string;
+  children?: { label: string; href: string }[];
+};
 
 export function MobileNav({ navItems }: { navItems: NavItem[] }) {
   return (
@@ -47,34 +47,32 @@ export function MobileNav({ navItems }: { navItems: NavItem[] }) {
         </DrawerHeader>
         <nav className="flex flex-col gap-1 p-4">
           {navItems.map((item) =>
-            item.children
-              ? (
-                  <div key={item.label} className="flex flex-col gap-1">
-                    <span className="px-2 py-1.5 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                      {item.label}
-                    </span>
-                    {item.children.map((child) => (
-                      <DrawerClose key={child.label} asChild>
-                        <Link
-                          href={child.href}
-                          className="rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-muted"
-                        >
-                          {child.label}
-                        </Link>
-                      </DrawerClose>
-                    ))}
-                  </div>
-                )
-              : (
-                  <DrawerClose key={item.label} asChild>
+            item.children ? (
+              <div key={item.label} className="flex flex-col gap-1">
+                <span className="px-2 py-1.5 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                  {item.label}
+                </span>
+                {item.children.map((child) => (
+                  <DrawerClose key={child.label} asChild>
                     <Link
-                      href={item.href!}
+                      href={child.href}
                       className="rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-muted"
                     >
-                      {item.label}
+                      {child.label}
                     </Link>
                   </DrawerClose>
-                ),
+                ))}
+              </div>
+            ) : (
+              <DrawerClose key={item.label} asChild>
+                <Link
+                  href={item.href!}
+                  className="rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-muted"
+                >
+                  {item.label}
+                </Link>
+              </DrawerClose>
+            ),
           )}
         </nav>
         <Separator />
@@ -83,5 +81,5 @@ export function MobileNav({ navItems }: { navItems: NavItem[] }) {
         </div>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }

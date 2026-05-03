@@ -1,10 +1,15 @@
-'use client'
+"use client";
 
-import { SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarTrigger } from '@workspace/ui/components/sidebar'
-import Link from 'next/link'
+import {
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarTrigger,
+} from "@workspace/ui/components/sidebar";
+import Link from "next/link";
 
-import { Logo } from '@/components/logo'
-import { appPaths } from '@/config/app-paths'
+import { Logo } from "@/components/logo";
+import { appPaths } from "@/config/app-paths";
 
 export function AppSidebarHeader() {
   return (
@@ -21,5 +26,5 @@ export function AppSidebarHeader() {
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarHeader>
-  )
+  );
 }

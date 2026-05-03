@@ -4,8 +4,6 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "lint": "eslint . --max-warnings 0",
-    "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -34,14 +32,11 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@infra-x/typescript-config": "^0.1.6",
     "@tailwindcss/postcss": "^4.2.1",
     "@turbo/gen": "^2.8.17",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@infra-x/eslint-config": "^0.1.9",
-    "eslint": "^10.0.3",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3"
   },

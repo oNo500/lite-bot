@@ -1,29 +1,29 @@
-import { and, asc, eq } from 'drizzle-orm'
+import { and, asc, eq } from "drizzle-orm";
 
-import { db } from '@/db'
-import { ragChunk, ragDocument } from '@/db/schema'
+import { db } from "@/db";
+import { ragChunk, ragDocument } from "@/db/schema";
 
-import type { ChunkConfig } from '@/lib/rag/types'
+import type { ChunkConfig } from "@/lib/rag/types";
 
 export interface ChunkListItem {
-  id: string
-  chunkIndex: number
-  content: string
-  editedContent: string | null
-  charStart: number
-  charEnd: number
-  tokenCount: number
-  enabled: boolean
+  id: string;
+  chunkIndex: number;
+  content: string;
+  editedContent: string | null;
+  charStart: number;
+  charEnd: number;
+  tokenCount: number;
+  enabled: boolean;
 }
 
 export interface DocumentChunksResult {
   document: {
-    id: string
-    name: string
-    rawContent: string | null
-    chunkConfig: ChunkConfig | null
-  }
-  chunks: ChunkListItem[]
+    id: string;
+    name: string;
+    rawContent: string | null;
+    chunkConfig: ChunkConfig | null;
+  };
+  chunks: ChunkListItem[];
 }
 
 export async function getDocumentChunks(
@@ -39,9 +39,9 @@ export async function getDocumentChunks(
     })
     .from(ragDocument)
     .where(and(eq(ragDocument.id, documentId), eq(ragDocument.userId, userId)))
-    .limit(1)
+    .limit(1);
 
-  if (!doc) return null
+  if (!doc) return null;
 
   const chunks = await db
     .select({
@@ -56,7 +56,7 @@ export async function getDocumentChunks(
     })
     .from(ragChunk)
     .where(eq(ragChunk.documentId, documentId))
-    .orderBy(asc(ragChunk.chunkIndex))
+    .orderBy(asc(ragChunk.chunkIndex));
 
-  return { document: doc, chunks }
+  return { document: doc, chunks };
 }

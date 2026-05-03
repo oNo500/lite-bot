@@ -1,40 +1,40 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from "vitest";
 
-import { runCapabilities } from './run-capabilities'
+import { runCapabilities } from "./run-capabilities";
 
-import type { ChatCapability, ChatContext } from '../types'
+import type { ChatCapability, ChatContext } from "../types";
 
 const baseCtx: ChatContext = {
-  query: 'hi',
+  query: "hi",
   messages: [],
   systemPrompts: [],
   tools: {},
   metadata: {},
-}
+};
 
-const fixtureMeta = { name: 'fixture', description: 'test fixture capability' }
+const fixtureMeta = { name: "fixture", description: "test fixture capability" };
 
-describe('runCapabilities', () => {
-  it('skips disabled capabilities', async () => {
-    const preStream = vi.fn((ctx: ChatContext) => Promise.resolve(ctx))
-    const cap: ChatCapability = { id: 'x', meta: fixtureMeta, preStream }
+describe("runCapabilities", () => {
+  it("skips disabled capabilities", async () => {
+    const preStream = vi.fn((ctx: ChatContext) => Promise.resolve(ctx));
+    const cap: ChatCapability = { id: "x", meta: fixtureMeta, preStream };
 
-    await runCapabilities([{ capability: cap, config: {}, enabled: false }], baseCtx)
+    await runCapabilities([{ capability: cap, config: {}, enabled: false }], baseCtx);
 
-    expect(preStream).not.toHaveBeenCalled()
-  })
+    expect(preStream).not.toHaveBeenCalled();
+  });
 
-  it('runs preStream in order and accumulates context', async () => {
+  it("runs preStream in order and accumulates context", async () => {
     const cap1: ChatCapability = {
-      id: 'a',
+      id: "a",
       meta: fixtureMeta,
-      preStream: (ctx) => Promise.resolve({ ...ctx, systemPrompts: [...ctx.systemPrompts, 'A'] }),
-    }
+      preStream: (ctx) => Promise.resolve({ ...ctx, systemPrompts: [...ctx.systemPrompts, "A"] }),
+    };
     const cap2: ChatCapability = {
-      id: 'b',
+      id: "b",
       meta: fixtureMeta,
-      preStream: (ctx) => Promise.resolve({ ...ctx, systemPrompts: [...ctx.systemPrompts, 'B'] }),
-    }
+      preStream: (ctx) => Promise.resolve({ ...ctx, systemPrompts: [...ctx.systemPrompts, "B"] }),
+    };
 
     const result = await runCapabilities(
       [
@@ -42,53 +42,44 @@ describe('runCapabilities', () => {
         { capability: cap2, config: {}, enabled: true },
       ],
       baseCtx,
-    )
+    );
 
-    expect(result.systemPrompts).toEqual(['A', 'B'])
-  })
+    expect(result.systemPrompts).toEqual(["A", "B"]);
+  });
 
-  it('appends buildSystemPrompt result to systemPrompts', async () => {
+  it("appends buildSystemPrompt result to systemPrompts", async () => {
     const cap: ChatCapability = {
-      id: 's',
+      id: "s",
       meta: fixtureMeta,
-      buildSystemPrompt: () => Promise.resolve('system text'),
-    }
+      buildSystemPrompt: () => Promise.resolve("system text"),
+    };
 
-    const result = await runCapabilities(
-      [{ capability: cap, config: {}, enabled: true }],
-      baseCtx,
-    )
+    const result = await runCapabilities([{ capability: cap, config: {}, enabled: true }], baseCtx);
 
-    expect(result.systemPrompts).toEqual(['system text'])
-  })
+    expect(result.systemPrompts).toEqual(["system text"]);
+  });
 
-  it('skips null buildSystemPrompt', async () => {
+  it("skips null buildSystemPrompt", async () => {
     const cap: ChatCapability = {
-      id: 's',
+      id: "s",
       meta: fixtureMeta,
       buildSystemPrompt: () => Promise.resolve(null),
-    }
+    };
 
-    const result = await runCapabilities(
-      [{ capability: cap, config: {}, enabled: true }],
-      baseCtx,
-    )
+    const result = await runCapabilities([{ capability: cap, config: {}, enabled: true }], baseCtx);
 
-    expect(result.systemPrompts).toEqual([])
-  })
+    expect(result.systemPrompts).toEqual([]);
+  });
 
-  it('merges tools from buildTools', async () => {
+  it("merges tools from buildTools", async () => {
     const cap: ChatCapability = {
-      id: 't',
+      id: "t",
       meta: fixtureMeta,
-      buildTools: () => ({ foo: { description: 'f' } } as never),
-    }
+      buildTools: () => ({ foo: { description: "f" } }) as never,
+    };
 
-    const result = await runCapabilities(
-      [{ capability: cap, config: {}, enabled: true }],
-      baseCtx,
-    )
+    const result = await runCapabilities([{ capability: cap, config: {}, enabled: true }], baseCtx);
 
-    expect(result.tools).toHaveProperty('foo')
-  })
-})
+    expect(result.tools).toHaveProperty("foo");
+  });
+});

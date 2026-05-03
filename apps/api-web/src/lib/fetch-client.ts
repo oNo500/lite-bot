@@ -1,35 +1,35 @@
-import { createClient } from '@infra-x/fwrap'
+import { createClient } from "@infra-x/fwrap";
 
-import type { RequestOptions } from '@infra-x/fwrap'
+import type { RequestOptions } from "@infra-x/fwrap";
 
 export const fetchClient = createClient({
-//   prefixUrl:,
+  //   prefixUrl:,
   timeout: 30_000,
   retry: {
     limit: 2,
-    methods: ['GET', 'PUT', 'HEAD', 'DELETE', 'OPTIONS', 'TRACE'],
+    methods: ["GET", "PUT", "HEAD", "DELETE", "OPTIONS", "TRACE"],
     statusCodes: [408, 413, 429, 500, 502, 503, 504],
   },
   onRequest: [
     async (request) => {
       if (globalThis.window === undefined) {
-        const { cookies } = await import('next/headers')
-        const cookieStore = await cookies()
-        const cookieHeader = cookieStore.toString()
+        const { cookies } = await import("next/headers");
+        const cookieStore = await cookies();
+        const cookieHeader = cookieStore.toString();
         if (cookieHeader) {
-          request.headers.set('Cookie', cookieHeader)
+          request.headers.set("Cookie", cookieHeader);
         }
       }
-      return request
+      return request;
     },
   ],
-})
+});
 
-export interface FetchClientOptions extends Omit<RequestOptions, 'prefixUrl'> {
+export interface FetchClientOptions extends Omit<RequestOptions, "prefixUrl"> {
   next?: {
-    revalidate?: number
-    tags?: string[]
-  }
+    revalidate?: number;
+    tags?: string[];
+  };
 }
 
 // TODO: use fetchClient Example

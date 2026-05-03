@@ -1,11 +1,11 @@
-import { db } from '@/db'
-import { ragDocument } from '@/db/schema'
+import { db } from "@/db";
+import { ragDocument } from "@/db/schema";
 
 interface CreateDocumentParams {
-  userId: string
-  name: string
-  mimeType: string
-  size: number
+  userId: string;
+  name: string;
+  mimeType: string;
+  size: number;
 }
 
 export async function createDocument(params: CreateDocumentParams) {
@@ -16,9 +16,9 @@ export async function createDocument(params: CreateDocumentParams) {
       name: params.name,
       mimeType: params.mimeType,
       size: params.size,
-      status: 'pending',
+      status: "pending",
     })
-    .returning()
+    .returning();
 
-  return doc!
+  return doc!;
 }

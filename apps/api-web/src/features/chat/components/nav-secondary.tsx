@@ -1,14 +1,10 @@
-'use client'
+"use client";
 
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@workspace/ui/components/sidebar'
-import { BookOpenIcon, BotIcon } from 'lucide-react'
-import Link from 'next/link'
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@workspace/ui/components/sidebar";
+import { BookOpenIcon, BotIcon } from "lucide-react";
+import Link from "next/link";
 
-import { appPaths } from '@/config/app-paths'
+import { appPaths } from "@/config/app-paths";
 
 export function NavSecondary() {
   return (
@@ -20,11 +16,14 @@ export function NavSecondary() {
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
-        <SidebarMenuButton render={<Link href={appPaths.capabilities.index.href} />} tooltip="能力配置">
+        <SidebarMenuButton
+          render={<Link href={appPaths.capabilities.index.href} />}
+          tooltip="能力配置"
+        >
           <BotIcon />
           <span>能力配置</span>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

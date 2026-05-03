@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { Button } from '@workspace/ui/components/button'
+import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
   DialogClose,
@@ -10,35 +10,35 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@workspace/ui/components/dialog'
-import { SidebarMenuButton, SidebarMenuItem } from '@workspace/ui/components/sidebar'
-import { Trash2Icon } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-import { toast } from 'sonner'
+} from "@workspace/ui/components/dialog";
+import { SidebarMenuButton, SidebarMenuItem } from "@workspace/ui/components/sidebar";
+import { Trash2Icon } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-import { appPaths } from '@/config/app-paths'
+import { appPaths } from "@/config/app-paths";
 
-import type { Chat } from '@/db/chat-queries'
+import type { Chat } from "@/db/chat-queries";
 
 interface ChatHistoryItemProps {
-  chat: Chat
-  onDelete: (chatId: string) => Promise<void>
+  chat: Chat;
+  onDelete: (chatId: string) => Promise<void>;
 }
 
 export function ChatHistoryItem({ chat, onDelete }: ChatHistoryItemProps) {
-  const pathname = usePathname()
-  const router = useRouter()
-  const isActive = pathname === appPaths.chat.detail.href(chat.id)
+  const pathname = usePathname();
+  const router = useRouter();
+  const isActive = pathname === appPaths.chat.detail.href(chat.id);
 
   async function handleConfirmDelete() {
     try {
-      await onDelete(chat.id)
+      await onDelete(chat.id);
       if (isActive) {
-        router.push(appPaths.chat.index.href)
+        router.push(appPaths.chat.index.href);
       }
     } catch {
-      toast.error('Failed to delete chat')
+      toast.error("Failed to delete chat");
     }
   }
 
@@ -54,13 +54,13 @@ export function ChatHistoryItem({ chat, onDelete }: ChatHistoryItemProps) {
 
       <Dialog>
         <DialogTrigger
-          render={(
+          render={
             <button
               type="button"
               className="absolute top-1/2 right-1 -translate-y-1/2 rounded-sm p-1 opacity-0 transition-opacity group-hover/item:opacity-100 hover:text-destructive"
               aria-label="Delete chat"
             />
-          )}
+          }
         >
           <Trash2Icon className="size-3.5" />
         </DialogTrigger>
@@ -82,5 +82,5 @@ export function ChatHistoryItem({ chat, onDelete }: ChatHistoryItemProps) {
         </DialogContent>
       </Dialog>
     </SidebarMenuItem>
-  )
+  );
 }

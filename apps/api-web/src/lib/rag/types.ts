@@ -1,12 +1,12 @@
 export interface Chunk {
-  content: string
-  charStart: number
-  charEnd: number
-  tokenCount: number
+  content: string;
+  charStart: number;
+  charEnd: number;
+  tokenCount: number;
 }
 
 export interface ChunkConfig {
-  strategy: 'fixed' | 'semantic'
-  size: number
-  overlap: number
+  strategy: "fixed" | "semantic";
+  size: number;
+  overlap: number;
 }

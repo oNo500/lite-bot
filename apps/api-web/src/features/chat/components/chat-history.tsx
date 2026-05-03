@@ -1,88 +1,88 @@
-'use client'
+"use client";
 
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-} from '@workspace/ui/components/sidebar'
-import { Skeleton } from '@workspace/ui/components/skeleton'
-import { useInView } from 'motion/react'
-import { useEffect, useRef } from 'react'
-import { toast } from 'sonner'
+} from "@workspace/ui/components/sidebar";
+import { Skeleton } from "@workspace/ui/components/skeleton";
+import { useInView } from "motion/react";
+import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 
-import { appPaths } from '@/config/app-paths'
-import { groupChatsByDate } from '@/features/chat/utils/group-chats-by-date'
+import { appPaths } from "@/config/app-paths";
+import { groupChatsByDate } from "@/features/chat/utils/group-chats-by-date";
 
-import { ChatHistoryItem } from './chat-history-item'
+import { ChatHistoryItem } from "./chat-history-item";
 
-import type { Chat } from '@/db/chat-queries'
+import type { Chat } from "@/db/chat-queries";
 
 interface HistoryPage {
-  chats: Chat[]
-  hasMore: boolean
+  chats: Chat[];
+  hasMore: boolean;
 }
 
 async function fetchHistory(endingBefore?: string): Promise<HistoryPage> {
-  const url = new URL(appPaths.api.history.href, globalThis.location.origin)
-  if (endingBefore) url.searchParams.set('ending_before', endingBefore)
-  const res = await fetch(url.toString())
-  if (!res.ok) throw new Error('Failed to fetch history')
-  return res.json() as Promise<HistoryPage>
+  const url = new URL(appPaths.api.history.href, globalThis.location.origin);
+  if (endingBefore) url.searchParams.set("ending_before", endingBefore);
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error("Failed to fetch history");
+  return res.json() as Promise<HistoryPage>;
 }
 
 export function ChatHistory() {
-  const queryClient = useQueryClient()
-  const sentinelRef = useRef<HTMLDivElement>(null)
-  const inView = useInView(sentinelRef)
+  const queryClient = useQueryClient();
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(sentinelRef);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery({
-    queryKey: ['chat-history'],
+    queryKey: ["chat-history"],
     queryFn: ({ pageParam }) => fetchHistory(pageParam),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => {
-      if (!lastPage.hasMore) return
-      return lastPage.chats.at(-1)?.id
+      if (!lastPage.hasMore) return undefined;
+      return lastPage.chats.at(-1)?.id;
     },
-  })
+  });
 
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
-      void fetchNextPage()
+      void fetchNextPage();
     }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   async function handleDelete(chatId: string) {
     const res = await fetch(appPaths.api.history.href, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ chatId }),
-    })
-    if (!res.ok) throw new Error('Delete failed')
-    await queryClient.invalidateQueries({ queryKey: ['chat-history'] })
-    toast.success('Conversation deleted')
+    });
+    if (!res.ok) throw new Error("Delete failed");
+    await queryClient.invalidateQueries({ queryKey: ["chat-history"] });
+    toast.success("Conversation deleted");
   }
 
-  if (status === 'pending') {
+  if (status === "pending") {
     return (
       <SidebarContent>
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupLabel>History</SidebarGroupLabel>
           <SidebarGroupContent>
             <div className="flex flex-col gap-1 px-2">
-              {['s1', 's2', 's3', 's4', 's5'].map((k) => (
+              {["s1", "s2", "s3", "s4", "s5"].map((k) => (
                 <Skeleton key={k} className="h-8 w-full rounded-md" />
               ))}
             </div>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-    )
+    );
   }
 
-  if (status === 'error') {
+  if (status === "error") {
     return (
       <SidebarContent>
         <SidebarGroup>
@@ -91,15 +91,17 @@ export function ChatHistory() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-    )
+    );
   }
 
-  const seen = new Set<string>()
-  const allChats = data.pages.flatMap((p) => p.chats).filter((c) => {
-    if (seen.has(c.id)) return false
-    seen.add(c.id)
-    return true
-  })
+  const seen = new Set<string>();
+  const allChats = data.pages
+    .flatMap((p) => p.chats)
+    .filter((c) => {
+      if (seen.has(c.id)) return false;
+      seen.add(c.id);
+      return true;
+    });
 
   if (allChats.length === 0) {
     return (
@@ -110,10 +112,10 @@ export function ChatHistory() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-    )
+    );
   }
 
-  const groups = groupChatsByDate(allChats)
+  const groups = groupChatsByDate(allChats);
 
   return (
     <SidebarContent>
@@ -136,7 +138,7 @@ export function ChatHistory() {
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupContent>
             <div className="flex flex-col gap-1 px-2">
-              {['p1', 'p2', 'p3'].map((k) => (
+              {["p1", "p2", "p3"].map((k) => (
                 <Skeleton key={k} className="h-8 w-full rounded-md" />
               ))}
             </div>
@@ -144,5 +146,5 @@ export function ChatHistory() {
         </SidebarGroup>
       )}
     </SidebarContent>
-  )
+  );
 }

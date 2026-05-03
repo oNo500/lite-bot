@@ -1,22 +1,23 @@
-import { Badge } from '@workspace/ui/components/badge'
-import { BotIcon } from 'lucide-react'
+import { Badge } from "@workspace/ui/components/badge";
+import { BotIcon } from "lucide-react";
 
-import type { CapabilityInfo } from '../queries/get-flow-info'
+import type { CapabilityInfo } from "../queries/get-flow-info";
 
 interface CapabilityCardProps {
-  info: CapabilityInfo
+  info: CapabilityInfo;
 }
 
-const HOOK_LABELS: Record<keyof CapabilityInfo['hooks'], string> = {
-  preStream: '预处理',
-  buildSystemPrompt: 'system prompt',
-  buildTools: 'tools',
-  onStreamStart: 'stream 写入',
-}
+const HOOK_LABELS: Record<keyof CapabilityInfo["hooks"], string> = {
+  preStream: "预处理",
+  buildSystemPrompt: "system prompt",
+  buildTools: "tools",
+  onStreamStart: "stream 写入",
+};
 
 export function CapabilityCard({ info }: CapabilityCardProps) {
-  const activeHooks = (Object.keys(info.hooks) as (keyof CapabilityInfo['hooks'])[])
-    .filter((key) => info.hooks[key])
+  const activeHooks = (Object.keys(info.hooks) as (keyof CapabilityInfo["hooks"])[]).filter(
+    (key) => info.hooks[key],
+  );
 
   return (
     <div className="rounded-md border bg-card">
@@ -28,8 +29,8 @@ export function CapabilityCard({ info }: CapabilityCardProps) {
             {info.id}
           </Badge>
         </div>
-        <Badge variant={info.enabled ? 'default' : 'outline'}>
-          {info.enabled ? '启用' : '停用'}
+        <Badge variant={info.enabled ? "default" : "outline"}>
+          {info.enabled ? "启用" : "停用"}
         </Badge>
       </div>
 
@@ -39,13 +40,15 @@ export function CapabilityCard({ info }: CapabilityCardProps) {
         <div className="space-y-1">
           <span className="text-xs font-medium text-muted-foreground">激活的钩子</span>
           <div className="flex flex-wrap gap-1.5">
-            {activeHooks.length === 0
-              ? <span className="text-xs text-muted-foreground">无</span>
-              : activeHooks.map((key) => (
-                  <Badge key={key} variant="outline" className="font-mono text-xs">
-                    {HOOK_LABELS[key]}
-                  </Badge>
-                ))}
+            {activeHooks.length === 0 ? (
+              <span className="text-xs text-muted-foreground">无</span>
+            ) : (
+              activeHooks.map((key) => (
+                <Badge key={key} variant="outline" className="font-mono text-xs">
+                  {HOOK_LABELS[key]}
+                </Badge>
+              ))
+            )}
           </div>
         </div>
 
@@ -59,5 +62,5 @@ export function CapabilityCard({ info }: CapabilityCardProps) {
         )}
       </div>
     </div>
-  )
+  );
 }
