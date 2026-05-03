@@ -1,42 +1,39 @@
 import { checkBotId } from 'botid/server'
-import { headers } from 'next/headers'
 
-import { auth } from '@/lib/auth'
+import { streamChat } from '@/features/chat/mutations/stream-chat'
+import { withAuth } from '@/lib/api/with-auth'
+import { withErrorHandler } from '@/lib/api/with-error-handler'
 import { ChatError } from '@/lib/errors'
 import { checkRateLimit } from '@/lib/ratelimit'
 
-import { streamAuthenticatedChat, streamEphemeralChat } from './_lib/stream-chat'
+import { DEFAULT_FLOW } from './_lib/default-flow'
 import { bodySchema } from './_lib/validate-request'
 
 import type { UIMessage } from 'ai'
 
-export async function POST(req: Request) {
-  // Bot 检测
+function getLastUserText(messages: UIMessage[]): string {
+  const lastUser = messages.toReversed().find((m) => m.role === 'user')
+  const firstText = lastUser?.parts.find((p) => p.type === 'text')
+  return firstText && 'text' in firstText ? String(firstText.text) : ''
+}
+
+export const POST = withErrorHandler(withAuth(async (req, { auth }) => {
   const botResult = await checkBotId()
   if (botResult.isBot && !botResult.isVerifiedBot) {
     return new ChatError('Forbidden', 403).toResponse()
   }
 
-  // 认证
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session) return new ChatError('Unauthorized', 401).toResponse()
-
-  // IP 速率限制
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? '127.0.0.1'
   const { allowed } = await checkRateLimit(ip)
   if (!allowed) return new ChatError('Too Many Requests', 429).toResponse()
 
-  // 请求体解析
-  const parsed = bodySchema.safeParse(await req.json())
-  if (!parsed.success) return new ChatError('Bad Request', 400).toResponse()
+  const parsed = bodySchema.parse(await req.json())
+  const messages = parsed.messages as UIMessage[]
+  const query = getLastUserText(messages)
 
-  const { messages: rawMessages, chatId, useRag } = parsed.data
-  const messages = rawMessages as UIMessage[]
+  const isAnonymous = auth.session.user.isAnonymous ?? false
+  const userId = isAnonymous ? undefined : auth.session.user.id
+  const chatId = isAnonymous ? undefined : parsed.chatId
 
-  // 认证/游客分流
-  const isAnonymous = session.user.isAnonymous ?? false
-  if (isAnonymous) {
-    return streamEphemeralChat({ messages, useRag })
-  }
-  return streamAuthenticatedChat({ chatId, messages, userId: session.user.id, useRag })
-}
+  return streamChat({ flow: DEFAULT_FLOW, messages, query, userId, chatId })
+}))
