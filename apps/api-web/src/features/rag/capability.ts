@@ -6,6 +6,11 @@ import type { ChatCapability } from '@/features/chat/types'
 export const capability: ChatCapability<RagConfig> = {
   id: 'rag',
 
+  meta: {
+    name: '知识库 (RAG)',
+    description: '从用户上传的文档中检索相关片段，注入到 system prompt 引导模型使用。',
+  },
+
   async preStream(ctx, config) {
     if (!ctx.userId) return ctx
     const rag = await retrieveRagContext(ctx.query, ctx.userId, config)

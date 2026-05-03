@@ -1,12 +1,12 @@
 import { checkBotId } from 'botid/server'
 
+import { DEFAULT_FLOW } from '@/app/_capabilities/default-flow'
 import { streamChat } from '@/features/chat/mutations/stream-chat'
 import { withAuth } from '@/lib/api/with-auth'
 import { withErrorHandler } from '@/lib/api/with-error-handler'
 import { ChatError } from '@/lib/errors'
 import { checkRateLimit } from '@/lib/ratelimit'
 
-import { DEFAULT_FLOW } from './_lib/default-flow'
 import { bodySchema } from './_lib/validate-request'
 
 import type { UIMessage } from 'ai'
