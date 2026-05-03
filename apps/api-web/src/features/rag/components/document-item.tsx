@@ -2,6 +2,9 @@
 
 import { Button } from '@workspace/ui/components/button'
 import { FileTextIcon, Loader2Icon, Trash2Icon } from 'lucide-react'
+import Link from 'next/link'
+
+import { appPaths } from '@/config/app-paths'
 
 import { useDeleteDocument } from '../hooks/use-documents'
 
@@ -26,11 +29,24 @@ export function DocumentItem({ doc }: { doc: RagDocument }) {
   const isProcessing = doc.status === 'pending' || doc.status === 'processing'
   const sizeKb = (doc.size / 1024).toFixed(1)
 
+  const isReady = doc.status === 'ready'
+
   return (
     <div className="flex items-center gap-3 border-b px-4 py-3 transition-colors last:border-b-0 hover:bg-muted/30">
       <FileTextIcon className="size-4 shrink-0 text-muted-foreground" />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium">{doc.name}</p>
+        {isReady
+          ? (
+              <Link
+                href={appPaths.rag.detail.href(doc.id)}
+                className="truncate text-sm font-medium hover:underline"
+              >
+                {doc.name}
+              </Link>
+            )
+          : (
+              <p className="truncate text-sm font-medium">{doc.name}</p>
+            )}
         <p className="text-xs text-muted-foreground">
           {sizeKb}
           {' '}
