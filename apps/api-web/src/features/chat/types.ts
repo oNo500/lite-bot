@@ -10,8 +10,14 @@ export interface ChatContext {
   metadata: Record<string, unknown>
 }
 
+export interface CapabilityMeta {
+  name: string
+  description: string
+}
+
 export interface ChatCapability<TConfig = unknown> {
   id: string
+  meta: CapabilityMeta
   preStream?: (ctx: ChatContext, config: TConfig) => Promise<ChatContext>
   buildSystemPrompt?: (ctx: ChatContext, config: TConfig) => Promise<string | null>
   buildTools?: (ctx: ChatContext, config: TConfig) => ToolSet

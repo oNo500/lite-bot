@@ -26,6 +26,9 @@ export const appPaths = {
   rag: {
     index: { href: '/rag' },
   },
+  capabilities: {
+    index: { href: '/capabilities' },
+  },
   api: {
     files: {
       upload: { href: '/api/files/upload' },

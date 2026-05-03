@@ -12,10 +12,12 @@ const baseCtx: ChatContext = {
   metadata: {},
 }
 
+const fixtureMeta = { name: 'fixture', description: 'test fixture capability' }
+
 describe('runCapabilities', () => {
   it('skips disabled capabilities', async () => {
     const preStream = vi.fn((ctx: ChatContext) => Promise.resolve(ctx))
-    const cap: ChatCapability = { id: 'x', preStream }
+    const cap: ChatCapability = { id: 'x', meta: fixtureMeta, preStream }
 
     await runCapabilities([{ capability: cap, config: {}, enabled: false }], baseCtx)
 
@@ -25,10 +27,12 @@ describe('runCapabilities', () => {
   it('runs preStream in order and accumulates context', async () => {
     const cap1: ChatCapability = {
       id: 'a',
+      meta: fixtureMeta,
       preStream: (ctx) => Promise.resolve({ ...ctx, systemPrompts: [...ctx.systemPrompts, 'A'] }),
     }
     const cap2: ChatCapability = {
       id: 'b',
+      meta: fixtureMeta,
       preStream: (ctx) => Promise.resolve({ ...ctx, systemPrompts: [...ctx.systemPrompts, 'B'] }),
     }
 
@@ -46,6 +50,7 @@ describe('runCapabilities', () => {
   it('appends buildSystemPrompt result to systemPrompts', async () => {
     const cap: ChatCapability = {
       id: 's',
+      meta: fixtureMeta,
       buildSystemPrompt: () => Promise.resolve('system text'),
     }
 
@@ -60,6 +65,7 @@ describe('runCapabilities', () => {
   it('skips null buildSystemPrompt', async () => {
     const cap: ChatCapability = {
       id: 's',
+      meta: fixtureMeta,
       buildSystemPrompt: () => Promise.resolve(null),
     }
 
@@ -74,6 +80,7 @@ describe('runCapabilities', () => {
   it('merges tools from buildTools', async () => {
     const cap: ChatCapability = {
       id: 't',
+      meta: fixtureMeta,
       buildTools: () => ({ foo: { description: 'f' } } as never),
     }
 
