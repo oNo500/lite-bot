@@ -12,8 +12,11 @@ import {
   MessageResponse,
 } from '@/components/ai-elements/message'
 import { Shimmer } from '@/components/ai-elements/shimmer'
+import { RenderTextWithCitations } from '@/features/chat/components/inline-citations'
 import { MessageEvalButtons } from '@/features/chat/components/message-eval-buttons'
+import { SourcesList } from '@/features/chat/components/sources-list'
 
+import type { RetrievedChunk } from '@/features/rag/queries/types'
 import type { DynamicToolUIPart, UIMessage } from 'ai'
 
 import 'streamdown/styles.css'
@@ -39,12 +42,31 @@ function AssistantActions({ message }: { message: UIMessage, messages: UIMessage
   )
 }
 
-function renderMessageParts(message: UIMessage) {
+function getRagSources(message: UIMessage): RetrievedChunk[] {
+  for (const part of message.parts) {
+    if (part.type === 'data-rag-sources' && 'data' in part) {
+      return (part as { data: RetrievedChunk[] }).data
+    }
+  }
+  return []
+}
+
+function renderMessageParts(message: UIMessage, ragSources: RetrievedChunk[]) {
   const counters: Record<string, number> = {}
   return message.parts.map((part) => {
     counters[part.type] = (counters[part.type] ?? 0) + 1
     const key = `${message.id}-${part.type}-${counters[part.type]}`
     if (part.type === 'text') {
+      if (message.role === 'assistant' && ragSources.length > 0) {
+        return (
+          <RenderTextWithCitations
+            key={key}
+            text={part.text}
+            sources={ragSources}
+            keyPrefix={key}
+          />
+        )
+      }
       return (
         <MessageResponse key={key} parseIncompleteMarkdown>
           {part.text}
@@ -118,18 +140,22 @@ export function ChatMessages({ messages, status }: { messages: UIMessage[], stat
 
   return (
     <div className="flex-1 space-y-4 overflow-y-auto p-4">
-      {messages.map((message) => (
-        <div key={message.id}>
-          <Message from={message.role}>
-            <MessageContent>
-              {renderMessageParts(message)}
-            </MessageContent>
-          </Message>
-          {message.role === 'assistant' && hasContent(message) && !(isStreaming && message.id === lastMessage?.id) && (
-            <AssistantActions message={message} messages={messages} />
-          )}
-        </div>
-      ))}
+      {messages.map((message) => {
+        const ragSources = message.role === 'assistant' ? getRagSources(message) : []
+        return (
+          <div key={message.id}>
+            <Message from={message.role}>
+              <MessageContent>
+                {ragSources.length > 0 && <SourcesList sources={ragSources} />}
+                {renderMessageParts(message, ragSources)}
+              </MessageContent>
+            </Message>
+            {message.role === 'assistant' && hasContent(message) && !(isStreaming && message.id === lastMessage?.id) && (
+              <AssistantActions message={message} messages={messages} />
+            )}
+          </div>
+        )
+      })}
       {showLoading && <Shimmer className="px-4 text-sm">Thinking...</Shimmer>}
       <div ref={bottomRef} />
     </div>
