@@ -56,10 +56,10 @@ pnpm -F api-web db:studio     # Open Drizzle Studio (visual database browser)
 All environment variables must be declared and validated in `src/config/env.ts`. Import from this module elsewhere — never access `process.env.*` or `import.meta.env.*` directly.
 
 ```ts
-import { env } from '@/config/env'
+import { env } from "@/config/env";
 
-env.DATABASE_URL        // correct
-process.env.DATABASE_URL // forbidden
+env.DATABASE_URL; // correct
+process.env.DATABASE_URL; // forbidden
 ```
 
 ### Path Aliases

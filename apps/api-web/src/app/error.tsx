@@ -1,17 +1,17 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
+import { useEffect } from "react";
 
 export default function ErrorPage({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error)
-  }, [error])
+    console.error(error);
+  }, [error]);
 
   return (
     <div className="flex h-full flex-col items-center justify-center px-6 text-center">
@@ -22,7 +22,7 @@ export default function ErrorPage({
             Something went wrong
           </h1>
           <p className="text-sm text-pretty text-muted-foreground">
-            {error.message || 'An unexpected error occurred.'}
+            {error.message || "An unexpected error occurred."}
           </p>
         </div>
         <button
@@ -33,5 +33,5 @@ export default function ErrorPage({
         </button>
       </div>
     </div>
-  )
+  );
 }

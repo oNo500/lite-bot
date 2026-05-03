@@ -1,31 +1,28 @@
-import {
-  SidebarInset,
-  SidebarProvider,
-} from '@workspace/ui/components/sidebar'
-import { headers, cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
+import { SidebarInset, SidebarProvider } from "@workspace/ui/components/sidebar";
+import { headers, cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-import { appPaths } from '@/config/app-paths'
-import { AppHeader } from '@/features/chat/components/app-header'
-import { AppSidebar } from '@/features/chat/components/app-sidebar'
-import { auth } from '@/lib/auth'
+import { appPaths } from "@/config/app-paths";
+import { AppHeader } from "@/features/chat/components/app-header";
+import { AppSidebar } from "@/features/chat/components/app-sidebar";
+import { auth } from "@/lib/auth";
 
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from "react";
 
 export default async function ChatLayout({ children }: { children: ReactNode }) {
-  const session = await auth.api.getSession({ headers: await headers() })
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
-    redirect(appPaths.auth.guest.getHref(appPaths.chat.index.href))
+    redirect(appPaths.auth.guest.getHref(appPaths.chat.index.href));
   }
 
-  const cookieStore = await cookies()
-  const sidebarDefaultOpen = cookieStore.get('sidebar_state')?.value === 'true'
+  const cookieStore = await cookies();
+  const sidebarDefaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 
   return (
     <SidebarProvider
       defaultOpen={sidebarDefaultOpen}
-      style={{ '--sidebar-width': '20rem', '--sidebar-width-mobile': '20rem' } as CSSProperties}
+      style={{ "--sidebar-width": "20rem", "--sidebar-width-mobile": "20rem" } as CSSProperties}
     >
       <AppSidebar />
       <SidebarInset className="pt-14">
@@ -33,5 +30,5 @@ export default async function ChatLayout({ children }: { children: ReactNode }) 
         {children}
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

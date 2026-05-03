@@ -1,13 +1,13 @@
 export class ChatError extends Error {
-  readonly status: number
+  readonly status: number;
 
   constructor(message: string, status: number) {
-    super(message)
-    this.name = 'ChatError'
-    this.status = status
+    super(message);
+    this.name = "ChatError";
+    this.status = status;
   }
 
   toResponse(): Response {
-    return new Response(this.message, { status: this.status })
+    return new Response(this.message, { status: this.status });
   }
 }

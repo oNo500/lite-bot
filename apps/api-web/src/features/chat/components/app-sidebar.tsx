@@ -6,16 +6,16 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@workspace/ui/components/sidebar'
-import { PlusIcon } from 'lucide-react'
-import Link from 'next/link'
-import { Suspense } from 'react'
+} from "@workspace/ui/components/sidebar";
+import { PlusIcon } from "lucide-react";
+import Link from "next/link";
+import { Suspense } from "react";
 
-import { appPaths } from '@/config/app-paths'
+import { appPaths } from "@/config/app-paths";
 
-import { ChatHistory } from './chat-history'
-import { NavSecondary } from './nav-secondary'
-import { AppSidebarHeader } from './sidebar-header'
+import { ChatHistory } from "./chat-history";
+import { NavSecondary } from "./nav-secondary";
+import { AppSidebarHeader } from "./sidebar-header";
 
 export function AppSidebar() {
   return (
@@ -25,7 +25,10 @@ export function AppSidebar() {
         <SidebarGroupContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton render={<Link href={appPaths.chat.index.href} />} tooltip="New Chat">
+              <SidebarMenuButton
+                render={<Link href={appPaths.chat.index.href} />}
+                tooltip="New Chat"
+              >
                 <PlusIcon />
                 <span>New Chat</span>
               </SidebarMenuButton>
@@ -40,5 +43,5 @@ export function AppSidebar() {
         <NavSecondary />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

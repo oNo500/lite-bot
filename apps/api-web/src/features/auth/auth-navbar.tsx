@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { Github } from '@workspace/icons'
-import { Button } from '@workspace/ui/components/button'
+import { Github } from "@workspace/icons";
+import { Button } from "@workspace/ui/components/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -9,36 +9,43 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from '@workspace/ui/components/navigation-menu'
-import dynamic from 'next/dynamic'
-import Link from 'next/link'
+} from "@workspace/ui/components/navigation-menu";
+import dynamic from "next/dynamic";
+import Link from "next/link";
 
-import { Logo } from '@/components/logo'
-import { appPaths } from '@/config/app-paths'
-import { env } from '@/config/env'
+import { Logo } from "@/components/logo";
+import { appPaths } from "@/config/app-paths";
+import { env } from "@/config/env";
 
-import { UserMenu } from './user-menu'
+import { UserMenu } from "./user-menu";
 
-const MobileNav = dynamic(() => import('./mobile-nav').then((m) => m.MobileNav), { ssr: false })
+const MobileNav = dynamic(() => import("./mobile-nav").then((m) => m.MobileNav), { ssr: false });
 
 const navItems = [
   {
-    label: 'Products',
+    label: "Products",
     children: [
-      { label: 'API Platform', href: appPaths.chat.index.href, description: 'Build and manage your APIs' },
-      { label: 'Analytics', href: appPaths.chat.index.href, description: 'Insights and monitoring' },
+      {
+        label: "API Platform",
+        href: appPaths.chat.index.href,
+        description: "Build and manage your APIs",
+      },
+      {
+        label: "Analytics",
+        href: appPaths.chat.index.href,
+        description: "Insights and monitoring",
+      },
     ],
   },
-  { label: 'Docs', href: appPaths.chat.index.href },
-  { label: 'Pricing', href: appPaths.chat.index.href },
-]
+  { label: "Docs", href: appPaths.chat.index.href },
+  { label: "Pricing", href: appPaths.chat.index.href },
+];
 
 export function AuthNavbar() {
   return (
     <header className="border-b border-border">
       <div className="container py-3.5">
         <div className="flex items-center justify-between">
-
           {/* Left: logo + desktop nav */}
           <div className="flex items-center gap-6">
             <Link
@@ -53,37 +60,37 @@ export function AuthNavbar() {
             <NavigationMenu className="hidden md:flex">
               <NavigationMenuList>
                 {navItems.map((item) =>
-                  item.children
-                    ? (
-                        <NavigationMenuItem key={item.label}>
-                          <NavigationMenuTrigger>{item.label}</NavigationMenuTrigger>
-                          <NavigationMenuContent>
-                            <ul className="grid w-48 gap-1 p-1">
-                              {item.children.map((child) => (
-                                <li key={child.label}>
-                                  <NavigationMenuLink
-                                    render={<Link href={child.href} />}
-                                    className="flex flex-col gap-0.5"
-                                  >
-                                    <span className="font-medium">{child.label}</span>
-                                    <span className="text-xs text-muted-foreground">{child.description}</span>
-                                  </NavigationMenuLink>
-                                </li>
-                              ))}
-                            </ul>
-                          </NavigationMenuContent>
-                        </NavigationMenuItem>
-                      )
-                    : (
-                        <NavigationMenuItem key={item.label}>
-                          <NavigationMenuLink
-                            render={<Link href={item.href} />}
-                            className="px-2.5 py-1.5 text-sm font-medium"
-                          >
-                            {item.label}
-                          </NavigationMenuLink>
-                        </NavigationMenuItem>
-                      ),
+                  item.children ? (
+                    <NavigationMenuItem key={item.label}>
+                      <NavigationMenuTrigger>{item.label}</NavigationMenuTrigger>
+                      <NavigationMenuContent>
+                        <ul className="grid w-48 gap-1 p-1">
+                          {item.children.map((child) => (
+                            <li key={child.label}>
+                              <NavigationMenuLink
+                                render={<Link href={child.href} />}
+                                className="flex flex-col gap-0.5"
+                              >
+                                <span className="font-medium">{child.label}</span>
+                                <span className="text-xs text-muted-foreground">
+                                  {child.description}
+                                </span>
+                              </NavigationMenuLink>
+                            </li>
+                          ))}
+                        </ul>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem>
+                  ) : (
+                    <NavigationMenuItem key={item.label}>
+                      <NavigationMenuLink
+                        render={<Link href={item.href} />}
+                        className="px-2.5 py-1.5 text-sm font-medium"
+                      >
+                        {item.label}
+                      </NavigationMenuLink>
+                    </NavigationMenuItem>
+                  ),
                 )}
               </NavigationMenuList>
             </NavigationMenu>
@@ -92,7 +99,13 @@ export function AuthNavbar() {
           {/* Desktop: right side */}
           <div className="hidden items-center gap-2 md:flex">
             <Button
-              render={<a href="https://github.com/oNo500/base" target="_blank" rel="noopener noreferrer" />}
+              render={
+                <a
+                  href="https://github.com/oNo500/base"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
               nativeButton={false}
               variant="ghost"
               size="icon"
@@ -107,9 +120,8 @@ export function AuthNavbar() {
           <div className="md:hidden">
             <MobileNav navItems={navItems} />
           </div>
-
         </div>
       </div>
     </header>
-  )
+  );
 }

@@ -1,18 +1,18 @@
-import { and, cosineDistance, desc, eq, gt, sql } from 'drizzle-orm'
+import { and, cosineDistance, desc, eq, gt, sql } from "drizzle-orm";
 
-import { db } from '@/db'
-import { ragChunk, ragDocument } from '@/db/schema'
+import { db } from "@/db";
+import { ragChunk, ragDocument } from "@/db/schema";
 
-import type { RagConfig } from './types'
+import type { RagConfig } from "./types";
 
 interface SearchedChunk {
-  chunkId: string
-  documentId: string
-  documentName: string
-  content: string
-  charStart: number
-  charEnd: number
-  similarity: number
+  chunkId: string;
+  documentId: string;
+  documentName: string;
+  content: string;
+  charStart: number;
+  charEnd: number;
+  similarity: number;
 }
 
 export async function searchSimilarChunks(
@@ -20,8 +20,8 @@ export async function searchSimilarChunks(
   userId: string,
   config: RagConfig,
 ): Promise<SearchedChunk[]> {
-  const similarity = sql<number>`1 - (${cosineDistance(ragChunk.embedding, queryEmbedding)})`
-  const content = sql<string>`COALESCE(${ragChunk.editedContent}, ${ragChunk.content})`
+  const similarity = sql<number>`1 - (${cosineDistance(ragChunk.embedding, queryEmbedding)})`;
+  const content = sql<string>`COALESCE(${ragChunk.editedContent}, ${ragChunk.content})`;
 
   return db
     .select({
@@ -38,11 +38,11 @@ export async function searchSimilarChunks(
     .where(
       and(
         eq(ragDocument.userId, userId),
-        eq(ragDocument.status, 'ready'),
+        eq(ragDocument.status, "ready"),
         eq(ragChunk.enabled, true),
         gt(similarity, config.similarityThreshold),
       ),
     )
     .orderBy(desc(similarity))
-    .limit(config.topK)
+    .limit(config.topK);
 }

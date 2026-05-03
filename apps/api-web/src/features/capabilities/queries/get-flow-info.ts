@@ -1,22 +1,22 @@
-import type { CapabilityMeta, ChatFlow } from '@/features/chat/types'
+import type { CapabilityMeta, ChatFlow } from "@/features/chat/types";
 
 export interface CapabilityInfo {
-  id: string
-  meta: CapabilityMeta
-  enabled: boolean
-  config: unknown
+  id: string;
+  meta: CapabilityMeta;
+  enabled: boolean;
+  config: unknown;
   hooks: {
-    preStream: boolean
-    buildSystemPrompt: boolean
-    buildTools: boolean
-    onStreamStart: boolean
-  }
+    preStream: boolean;
+    buildSystemPrompt: boolean;
+    buildTools: boolean;
+    onStreamStart: boolean;
+  };
 }
 
 export interface FlowInfo {
-  capabilities: CapabilityInfo[]
-  agentLoop: { maxSteps: number }
-  model?: string
+  capabilities: CapabilityInfo[];
+  agentLoop: { maxSteps: number };
+  model?: string;
 }
 
 export function getFlowInfo(flow: ChatFlow): FlowInfo {
@@ -35,5 +35,5 @@ export function getFlowInfo(flow: ChatFlow): FlowInfo {
     })),
     agentLoop: flow.agentLoop,
     model: flow.model,
-  }
+  };
 }

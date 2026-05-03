@@ -1,140 +1,161 @@
-import { relations } from 'drizzle-orm'
-import { pgTable, text, timestamp, boolean, index, uuid, varchar, json, jsonb, integer, unique, vector } from 'drizzle-orm/pg-core'
+import { relations } from "drizzle-orm";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  index,
+  uuid,
+  varchar,
+  json,
+  jsonb,
+  integer,
+  unique,
+  vector,
+} from "drizzle-orm/pg-core";
 
-import type { ChunkConfig } from '@/lib/rag/types'
+import type { ChunkConfig } from "@/lib/rag/types";
 
-export const user = pgTable('user', {
-  id: text('id').primaryKey(),
-  name: text('name').notNull(),
-  email: text('email').notNull().unique(),
-  emailVerified: boolean('email_verified').default(false).notNull(),
-  image: text('image'),
-  isAnonymous: boolean('is_anonymous').default(false),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at')
+export const user = pgTable("user", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").default(false).notNull(),
+  image: text("image"),
+  isAnonymous: boolean("is_anonymous").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
-})
+});
 
 export const session = pgTable(
-  'session',
+  "session",
   {
-    id: text('id').primaryKey(),
-    expiresAt: timestamp('expires_at').notNull(),
-    token: text('token').notNull().unique(),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at')
+    id: text("id").primaryKey(),
+    expiresAt: timestamp("expires_at").notNull(),
+    token: text("token").notNull().unique(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
-    ipAddress: text('ip_address'),
-    userAgent: text('user_agent'),
-    userId: text('user_id')
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    userId: text("user_id")
       .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
+      .references(() => user.id, { onDelete: "cascade" }),
   },
-  (table) => [index('session_userId_idx').on(table.userId)],
-)
+  (table) => [index("session_userId_idx").on(table.userId)],
+);
 
 export const account = pgTable(
-  'account',
+  "account",
   {
-    id: text('id').primaryKey(),
-    accountId: text('account_id').notNull(),
-    providerId: text('provider_id').notNull(),
-    userId: text('user_id')
+    id: text("id").primaryKey(),
+    accountId: text("account_id").notNull(),
+    providerId: text("provider_id").notNull(),
+    userId: text("user_id")
       .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
-    accessToken: text('access_token'),
-    refreshToken: text('refresh_token'),
-    idToken: text('id_token'),
-    accessTokenExpiresAt: timestamp('access_token_expires_at'),
-    refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
-    scope: text('scope'),
-    password: text('password'),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at')
+      .references(() => user.id, { onDelete: "cascade" }),
+    accessToken: text("access_token"),
+    refreshToken: text("refresh_token"),
+    idToken: text("id_token"),
+    accessTokenExpiresAt: timestamp("access_token_expires_at"),
+    refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+    scope: text("scope"),
+    password: text("password"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
-  (table) => [index('account_userId_idx').on(table.userId)],
-)
+  (table) => [index("account_userId_idx").on(table.userId)],
+);
 
 export const verification = pgTable(
-  'verification',
+  "verification",
   {
-    id: text('id').primaryKey(),
-    identifier: text('identifier').notNull(),
-    value: text('value').notNull(),
-    expiresAt: timestamp('expires_at').notNull(),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at')
+    id: text("id").primaryKey(),
+    identifier: text("identifier").notNull(),
+    value: text("value").notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
       .defaultNow()
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
-  (table) => [index('verification_identifier_idx').on(table.identifier)],
-)
+  (table) => [index("verification_identifier_idx").on(table.identifier)],
+);
 
-export const chat = pgTable('chat', {
-  id: uuid('id').primaryKey().notNull().defaultRandom(),
-  title: text('title').notNull(),
-  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
-  visibility: varchar('visibility', { enum: ['public', 'private'] }).notNull().default('private'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-})
+export const chat = pgTable("chat", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  title: text("title").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  visibility: varchar("visibility", { enum: ["public", "private"] })
+    .notNull()
+    .default("private"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
 
-export const chatMessage = pgTable('chat_message', {
-  id: text('id').primaryKey().notNull(),
-  chatId: uuid('chat_id').notNull().references(() => chat.id, { onDelete: 'cascade' }),
-  role: varchar('role').notNull(),
-  parts: json('parts').notNull(),
-  attachments: json('attachments').notNull().default([]),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-})
+export const chatMessage = pgTable("chat_message", {
+  id: text("id").primaryKey().notNull(),
+  chatId: uuid("chat_id")
+    .notNull()
+    .references(() => chat.id, { onDelete: "cascade" }),
+  role: varchar("role").notNull(),
+  parts: json("parts").notNull(),
+  attachments: json("attachments").notNull().default([]),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
 
 export const messageEval = pgTable(
-  'message_eval',
+  "message_eval",
   {
-    id: uuid('id').primaryKey().notNull().defaultRandom(),
-    messageId: text('message_id').notNull().references(() => chatMessage.id, { onDelete: 'cascade' }),
-    score: integer('score').notNull(),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at')
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    messageId: text("message_id")
+      .notNull()
+      .references(() => chatMessage.id, { onDelete: "cascade" }),
+    score: integer("score").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
       .defaultNow()
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (table) => [unique('message_eval_message_id_unique').on(table.messageId)],
-)
+  (table) => [unique("message_eval_message_id_unique").on(table.messageId)],
+);
 
 export const messageEvalRelations = relations(messageEval, ({ one }) => ({
   message: one(chatMessage, {
     fields: [messageEval.messageId],
     references: [chatMessage.id],
   }),
-}))
+}));
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
   chats: many(chat),
   ragDocuments: many(ragDocument),
-}))
+}));
 
 export const sessionRelations = relations(session, ({ one }) => ({
   user: one(user, {
     fields: [session.userId],
     references: [user.id],
   }),
-}))
+}));
 
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
     references: [user.id],
   }),
-}))
+}));
 
 export const chatRelations = relations(chat, ({ one, many }) => ({
   user: one(user, {
@@ -142,50 +163,65 @@ export const chatRelations = relations(chat, ({ one, many }) => ({
     references: [user.id],
   }),
   messages: many(chatMessage),
-}))
+}));
 
 export const chatMessageRelations = relations(chatMessage, ({ one }) => ({
   chat: one(chat, {
     fields: [chatMessage.chatId],
     references: [chat.id],
   }),
-}))
+}));
 
-export const ragDocument = pgTable('rag_document', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
-  name: text('name').notNull(),
-  mimeType: text('mime_type').notNull(),
-  size: integer('size').notNull(),
-  status: varchar('status', { enum: ['pending', 'processing', 'ready', 'error'] }).default('pending').notNull(),
-  errorMessage: text('error_message'),
-  rawContent: text('raw_content'),
-  chunkConfig: jsonb('chunk_config').$type<ChunkConfig>().default({ strategy: 'fixed', size: 512, overlap: 64 }),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
-})
+export const ragDocument = pgTable("rag_document", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  mimeType: text("mime_type").notNull(),
+  size: integer("size").notNull(),
+  status: varchar("status", { enum: ["pending", "processing", "ready", "error"] })
+    .default("pending")
+    .notNull(),
+  errorMessage: text("error_message"),
+  rawContent: text("raw_content"),
+  chunkConfig: jsonb("chunk_config")
+    .$type<ChunkConfig>()
+    .default({ strategy: "fixed", size: 512, overlap: 64 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
 
-export const ragChunk = pgTable('rag_chunk', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  documentId: uuid('document_id').notNull().references(() => ragDocument.id, { onDelete: 'cascade' }),
-  content: text('content').notNull(),
-  editedContent: text('edited_content'),
-  embedding: vector('embedding', { dimensions: 1536 }),
-  chunkIndex: integer('chunk_index').notNull(),
-  charStart: integer('char_start').notNull(),
-  charEnd: integer('char_end').notNull(),
-  tokenCount: integer('token_count').notNull(),
-  enabled: boolean('enabled').notNull().default(true),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-}, (table) => [
-  index('rag_chunk_embedding_idx').using('hnsw', table.embedding.op('vector_cosine_ops')),
-])
+export const ragChunk = pgTable(
+  "rag_chunk",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    documentId: uuid("document_id")
+      .notNull()
+      .references(() => ragDocument.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    editedContent: text("edited_content"),
+    embedding: vector("embedding", { dimensions: 1536 }),
+    chunkIndex: integer("chunk_index").notNull(),
+    charStart: integer("char_start").notNull(),
+    charEnd: integer("char_end").notNull(),
+    tokenCount: integer("token_count").notNull(),
+    enabled: boolean("enabled").notNull().default(true),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("rag_chunk_embedding_idx").using("hnsw", table.embedding.op("vector_cosine_ops")),
+  ],
+);
 
 export const ragDocumentRelations = relations(ragDocument, ({ one, many }) => ({
   user: one(user, { fields: [ragDocument.userId], references: [user.id] }),
   chunks: many(ragChunk),
-}))
+}));
 
 export const ragChunkRelations = relations(ragChunk, ({ one }) => ({
   document: one(ragDocument, { fields: [ragChunk.documentId], references: [ragDocument.id] }),
-}))
+}));

@@ -4,43 +4,43 @@ export const appPaths = {
   auth: {
     signup: {
       getHref: (redirectTo?: string | null) =>
-        `/signup${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+        `/signup${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ""}`,
     },
     login: {
       getHref: (redirectTo?: string | null) =>
-        `/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+        `/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ""}`,
     },
     guest: {
       getHref: (redirectUrl?: string | null) =>
-        `/api/auth/guest${redirectUrl ? `?redirectUrl=${encodeURIComponent(redirectUrl)}` : ''}`,
+        `/api/auth/guest${redirectUrl ? `?redirectUrl=${encodeURIComponent(redirectUrl)}` : ""}`,
     },
   },
   legal: {
-    terms: { href: '/terms' },
-    privacy: { href: '/privacy' },
+    terms: { href: "/terms" },
+    privacy: { href: "/privacy" },
   },
   chat: {
-    index: { href: '/' },
+    index: { href: "/" },
     detail: { href: (id: string) => `/${id}` },
   },
   rag: {
-    index: { href: '/rag' },
+    index: { href: "/rag" },
     detail: {
       href: (documentId: string, highlightChunkId?: string) =>
-        `/rag/${documentId}${highlightChunkId ? `?highlight=${highlightChunkId}` : ''}`,
+        `/rag/${documentId}${highlightChunkId ? `?highlight=${highlightChunkId}` : ""}`,
     },
   },
   capabilities: {
-    index: { href: '/capabilities' },
+    index: { href: "/capabilities" },
   },
   api: {
     files: {
-      upload: { href: '/api/files/upload' },
+      upload: { href: "/api/files/upload" },
     },
-    history: { href: '/api/history' },
+    history: { href: "/api/history" },
 
     rag: {
-      documents: { href: '/api/rag/documents' },
+      documents: { href: "/api/rag/documents" },
       document: { href: (id: string) => `/api/rag/documents/${id}` },
       ingest: { href: (id: string) => `/api/rag/ingest/${id}` },
       documentChunks: { href: (id: string) => `/api/rag/documents/${id}/chunks` },
@@ -48,4 +48,4 @@ export const appPaths = {
       chunk: { href: (id: string) => `/api/rag/chunks/${id}` },
     },
   },
-}
+};

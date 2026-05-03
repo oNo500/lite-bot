@@ -1,16 +1,16 @@
-import { betterAuth } from 'better-auth'
-import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { nextCookies } from 'better-auth/next-js'
-import { anonymous } from 'better-auth/plugins'
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { nextCookies } from "better-auth/next-js";
+import { anonymous } from "better-auth/plugins";
 
-import { env } from '@/config/env'
-import { db } from '@/db'
+import { env } from "@/config/env";
+import { db } from "@/db";
 
 export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.BETTER_AUTH_URL,
   database: drizzleAdapter(db, {
-    provider: 'pg',
+    provider: "pg",
   }),
   emailAndPassword: {
     enabled: true,
@@ -22,4 +22,4 @@ export const auth = betterAuth({
     },
   },
   plugins: [anonymous(), nextCookies()],
-})
+});

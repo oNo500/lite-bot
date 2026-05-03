@@ -1,10 +1,10 @@
-import { env } from '@/config/env'
+import { env } from "@/config/env";
 
-import { AppProvider } from './provide'
+import { AppProvider } from "./provide";
 
-import type { Metadata } from 'next'
+import type { Metadata } from "next";
 
-import '@/styles/globals.css'
+import "@/styles/globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
@@ -12,20 +12,20 @@ export const metadata: Metadata = {
     default: env.NEXT_PUBLIC_APP_NAME,
     template: `%s | ${env.NEXT_PUBLIC_APP_NAME}`,
   },
-  description: 'A minimal foundation.',
+  description: "A minimal foundation.",
   openGraph: {
-    type: 'website',
+    type: "website",
     siteName: env.NEXT_PUBLIC_APP_NAME,
   },
   twitter: {
-    card: 'summary_large_image',
+    card: "summary_large_image",
   },
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -40,10 +40,8 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <AppProvider>
-          {children}
-        </AppProvider>
+        <AppProvider>{children}</AppProvider>
       </body>
     </html>
-  )
+  );
 }

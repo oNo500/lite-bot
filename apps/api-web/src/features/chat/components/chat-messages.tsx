@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import { CopyIcon } from 'lucide-react'
-import Image from 'next/image'
-import { useEffect, useRef } from 'react'
+import { CopyIcon } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useRef } from "react";
 
 import {
   Message,
@@ -10,27 +10,27 @@ import {
   MessageActions,
   MessageContent,
   MessageResponse,
-} from '@/components/ai-elements/message'
-import { Shimmer } from '@/components/ai-elements/shimmer'
-import { RenderTextWithCitations } from '@/features/chat/components/inline-citations'
-import { MessageEvalButtons } from '@/features/chat/components/message-eval-buttons'
-import { SourcesList } from '@/features/chat/components/sources-list'
+} from "@/components/ai-elements/message";
+import { Shimmer } from "@/components/ai-elements/shimmer";
+import { RenderTextWithCitations } from "@/features/chat/components/inline-citations";
+import { MessageEvalButtons } from "@/features/chat/components/message-eval-buttons";
+import { SourcesList } from "@/features/chat/components/sources-list";
 
-import type { RetrievedChunk } from '@/features/rag/queries/types'
-import type { DynamicToolUIPart, UIMessage } from 'ai'
+import type { RetrievedChunk } from "@/features/rag/queries/types";
+import type { DynamicToolUIPart, UIMessage } from "ai";
 
-import 'streamdown/styles.css'
+import "streamdown/styles.css";
 
-function AssistantActions({ message }: { message: UIMessage, messages: UIMessage[] }) {
+function AssistantActions({ message }: { message: UIMessage; messages: UIMessage[] }) {
   return (
     <MessageActions className="mt-1 ml-1">
       <MessageAction
         onClick={() => {
           const text = message.parts
-            .filter((p) => p.type === 'text')
-            .map((p) => (p as { type: 'text', text: string }).text)
-            .join('')
-          void navigator.clipboard.writeText(text)
+            .filter((p) => p.type === "text")
+            .map((p) => (p as { type: "text"; text: string }).text)
+            .join("");
+          void navigator.clipboard.writeText(text);
         }}
         tooltip="Copy"
         label="Copy message"
@@ -39,25 +39,25 @@ function AssistantActions({ message }: { message: UIMessage, messages: UIMessage
       </MessageAction>
       <MessageEvalButtons messageId={message.id} />
     </MessageActions>
-  )
+  );
 }
 
 function getRagSources(message: UIMessage): RetrievedChunk[] {
   for (const part of message.parts) {
-    if (part.type === 'data-rag-sources' && 'data' in part) {
-      return (part as { data: RetrievedChunk[] }).data
+    if (part.type === "data-rag-sources" && "data" in part) {
+      return (part as { data: RetrievedChunk[] }).data;
     }
   }
-  return []
+  return [];
 }
 
 function renderMessageParts(message: UIMessage, ragSources: RetrievedChunk[]) {
-  const counters: Record<string, number> = {}
+  const counters: Record<string, number> = {};
   return message.parts.map((part) => {
-    counters[part.type] = (counters[part.type] ?? 0) + 1
-    const key = `${message.id}-${part.type}-${counters[part.type]}`
-    if (part.type === 'text') {
-      if (message.role === 'assistant' && ragSources.length > 0) {
+    counters[part.type] = (counters[part.type] ?? 0) + 1;
+    const key = `${message.id}-${part.type}-${counters[part.type]}`;
+    if (part.type === "text") {
+      if (message.role === "assistant" && ragSources.length > 0) {
         return (
           <RenderTextWithCitations
             key={key}
@@ -65,24 +65,32 @@ function renderMessageParts(message: UIMessage, ragSources: RetrievedChunk[]) {
             sources={ragSources}
             keyPrefix={key}
           />
-        )
+        );
       }
       return (
         <MessageResponse key={key} parseIncompleteMarkdown>
           {part.text}
         </MessageResponse>
-      )
+      );
     }
-    if (part.type === 'file' && 'url' in part && 'mediaType' in part) {
-      const alt = 'filename' in part ? String(part.filename) : 'Attached image'
-      return <Image key={key} src={part.url} alt={alt} width={320} height={320} className="rounded-lg object-contain" />
+    if (part.type === "file" && "url" in part && "mediaType" in part) {
+      const alt = "filename" in part ? String(part.filename) : "Attached image";
+      return (
+        <Image
+          key={key}
+          src={part.url}
+          alt={alt}
+          width={320}
+          height={320}
+          className="rounded-lg object-contain"
+        />
+      );
     }
-    if (part.type === 'dynamic-tool' || part.type.startsWith('tool-')) {
-      const toolPart = part as DynamicToolUIPart
-      const toolName = part.type === 'dynamic-tool'
-        ? toolPart.toolName
-        : part.type.slice('tool-'.length)
-      const isDone = toolPart.state === 'output-available'
+    if (part.type === "dynamic-tool" || part.type.startsWith("tool-")) {
+      const toolPart = part as DynamicToolUIPart;
+      const toolName =
+        part.type === "dynamic-tool" ? toolPart.toolName : part.type.slice("tool-".length);
+      const isDone = toolPart.state === "output-available";
       return (
         <div key={key} className="my-1 overflow-hidden rounded-md border border-border/60 text-xs">
           <div className="flex items-center gap-2 border-b border-border/40 bg-muted/40 px-3 py-1.5">
@@ -94,18 +102,18 @@ function renderMessageParts(message: UIMessage, ragSources: RetrievedChunk[]) {
                 running
               </span>
             )}
-            {isDone && (
-              <span className="ml-auto text-emerald-500">done</span>
-            )}
+            {isDone && <span className="ml-auto text-emerald-500">done</span>}
           </div>
           {isDone && (
             <div className="space-y-1.5 px-3 py-2 font-mono">
-              {toolPart.input != null && Object.keys(toolPart.input as Record<string, unknown>).length > 0 && (
-                <div className="text-muted-foreground/70">
-                  <span className="text-muted-foreground">in </span>
-                  {JSON.stringify(toolPart.input)}
-                </div>
-              )}
+              {toolPart.input !== null &&
+                toolPart.input !== undefined &&
+                Object.keys(toolPart.input as Record<string, unknown>).length > 0 && (
+                  <div className="text-muted-foreground/70">
+                    <span className="text-muted-foreground">in </span>
+                    {JSON.stringify(toolPart.input)}
+                  </div>
+                )}
               <div>
                 <span className="text-muted-foreground">out </span>
                 <span className="text-foreground">{JSON.stringify(toolPart.output)}</span>
@@ -113,35 +121,39 @@ function renderMessageParts(message: UIMessage, ragSources: RetrievedChunk[]) {
             </div>
           )}
         </div>
-      )
+      );
     }
-    return null
-  })
+    return null;
+  });
 }
 
 function hasContent(message: UIMessage) {
   return message.parts.some(
-    (p) => (p.type === 'text' && p.text.length > 0) || p.type === 'file' || p.type === 'dynamic-tool' || p.type.startsWith('tool-'),
-  )
+    (p) =>
+      (p.type === "text" && p.text.length > 0) ||
+      p.type === "file" ||
+      p.type === "dynamic-tool" ||
+      p.type.startsWith("tool-"),
+  );
 }
 
-export function ChatMessages({ messages, status }: { messages: UIMessage[], status?: string }) {
-  const bottomRef = useRef<HTMLDivElement>(null)
+export function ChatMessages({ messages, status }: { messages: UIMessage[]; status?: string }) {
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-  if (messages.length === 0) return null
+  if (messages.length === 0) return null;
 
-  const isStreaming = status === 'submitted' || status === 'streaming'
-  const lastMessage = messages.at(-1)
-  const showLoading = isStreaming && lastMessage?.role === 'assistant' && !hasContent(lastMessage)
+  const isStreaming = status === "submitted" || status === "streaming";
+  const lastMessage = messages.at(-1);
+  const showLoading = isStreaming && lastMessage?.role === "assistant" && !hasContent(lastMessage);
 
   return (
     <div className="flex-1 space-y-4 overflow-y-auto p-4">
       {messages.map((message) => {
-        const ragSources = message.role === 'assistant' ? getRagSources(message) : []
+        const ragSources = message.role === "assistant" ? getRagSources(message) : [];
         return (
           <div key={message.id}>
             <Message from={message.role}>
@@ -150,14 +162,16 @@ export function ChatMessages({ messages, status }: { messages: UIMessage[], stat
                 {renderMessageParts(message, ragSources)}
               </MessageContent>
             </Message>
-            {message.role === 'assistant' && hasContent(message) && !(isStreaming && message.id === lastMessage?.id) && (
-              <AssistantActions message={message} messages={messages} />
-            )}
+            {message.role === "assistant" &&
+              hasContent(message) &&
+              !(isStreaming && message.id === lastMessage?.id) && (
+                <AssistantActions message={message} messages={messages} />
+              )}
           </div>
-        )
+        );
       })}
       {showLoading && <Shimmer className="px-4 text-sm">Thinking...</Shimmer>}
       <div ref={bottomRef} />
     </div>
-  )
+  );
 }

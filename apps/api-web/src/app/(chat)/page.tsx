@@ -1,7 +1,7 @@
-import { randomUUID } from 'node:crypto'
+import { randomUUID } from "node:crypto";
 
-import { ChatPage } from '@/features/chat/chat-page'
+import { ChatPage } from "@/features/chat/chat-page";
 
 export default function Page() {
-  return <ChatPage chatId={randomUUID()} />
+  return <ChatPage chatId={randomUUID()} />;
 }

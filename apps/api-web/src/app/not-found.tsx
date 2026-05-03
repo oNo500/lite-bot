@@ -1,7 +1,7 @@
-import { Button } from '@workspace/ui/components/button'
-import Link from 'next/link'
+import { Button } from "@workspace/ui/components/button";
+import Link from "next/link";
 
-import { appPaths } from '@/config/app-paths'
+import { appPaths } from "@/config/app-paths";
 
 export default function NotFound() {
   return (
@@ -16,10 +16,14 @@ export default function NotFound() {
             The page you're looking for doesn't exist or has been moved.
           </p>
         </div>
-        <Button render={<Link href={appPaths.chat.index.href} />} nativeButton={false} variant="outline">
+        <Button
+          render={<Link href={appPaths.chat.index.href} />}
+          nativeButton={false}
+          variant="outline"
+        >
           Back to Home
         </Button>
       </div>
     </div>
-  )
+  );
 }

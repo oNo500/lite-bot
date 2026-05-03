@@ -1,18 +1,18 @@
-'use client'
+"use client";
 
-import { Skeleton } from '@workspace/ui/components/skeleton'
-import { FolderOpenIcon } from 'lucide-react'
+import { Skeleton } from "@workspace/ui/components/skeleton";
+import { FolderOpenIcon } from "lucide-react";
 
-import { DocumentItem } from './document-item'
-import { useDocuments } from '../hooks/use-documents'
+import { DocumentItem } from "./document-item";
+import { useDocuments } from "../hooks/use-documents";
 
 export function DocumentList() {
-  const { data: docs, isLoading, error } = useDocuments()
+  const { data: docs, isLoading, error } = useDocuments();
 
   if (isLoading) {
     return (
       <div className="divide-y">
-        {(['a', 'b', 'c'] as const).map((k) => (
+        {(["a", "b", "c"] as const).map((k) => (
           <div key={k} className="flex items-center gap-3 px-4 py-3">
             <Skeleton className="size-4 rounded-sm" />
             <div className="flex-1 space-y-1.5">
@@ -23,15 +23,13 @@ export function DocumentList() {
           </div>
         ))}
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
-      <div className="px-4 py-8 text-center text-sm text-destructive">
-        加载失败，请刷新重试
-      </div>
-    )
+      <div className="px-4 py-8 text-center text-sm text-destructive">加载失败，请刷新重试</div>
+    );
   }
 
   if (!docs || docs.length === 0) {
@@ -40,7 +38,7 @@ export function DocumentList() {
         <FolderOpenIcon className="size-8 opacity-40" />
         <p className="text-sm">暂无文档，上传第一个文件开始吧</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -49,5 +47,5 @@ export function DocumentList() {
         <DocumentItem key={doc.id} doc={doc} />
       ))}
     </div>
-  )
+  );
 }

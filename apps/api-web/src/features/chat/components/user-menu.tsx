@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,43 +12,51 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu'
-import { HelpCircleIcon, LaptopIcon, LogOutIcon, MoonIcon, PaletteIcon, Settings2Icon, SunIcon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useTheme } from 'next-themes'
+} from "@workspace/ui/components/dropdown-menu";
+import {
+  HelpCircleIcon,
+  LaptopIcon,
+  LogOutIcon,
+  MoonIcon,
+  PaletteIcon,
+  Settings2Icon,
+  SunIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 
-import { appPaths } from '@/config/app-paths'
-import { authClient } from '@/lib/auth-client'
+import { appPaths } from "@/config/app-paths";
+import { authClient } from "@/lib/auth-client";
 
 function getInitials(name: string, email?: string): string {
   if (name) {
-    const parts = name.trim().split(' ')
-    const first = parts[0]
-    const last = parts.at(-1)
+    const parts = name.trim().split(" ");
+    const first = parts[0];
+    const last = parts.at(-1);
     if (parts.length >= 2 && first && last) {
-      return `${first[0]}${last[0]}`.toUpperCase()
+      return `${first[0]}${last[0]}`.toUpperCase();
     }
-    return name.slice(0, 2).toUpperCase()
+    return name.slice(0, 2).toUpperCase();
   }
   if (email) {
-    return email.split('@')[0]?.slice(0, 2).toUpperCase() ?? 'U'
+    return email.split("@")[0]?.slice(0, 2).toUpperCase() ?? "U";
   }
-  return 'U'
+  return "U";
 }
 
 export function UserMenu() {
-  const router = useRouter()
-  const { data: session } = authClient.useSession()
-  const { setTheme } = useTheme()
-  const user = session?.user
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
+  const { setTheme } = useTheme();
+  const user = session?.user;
 
-  const name = user?.name ?? ''
-  const email = user?.email ?? ''
-  const image = user?.image ?? ''
+  const name = user?.name ?? "";
+  const email = user?.email ?? "";
+  const image = user?.image ?? "";
 
   async function handleLogout() {
-    await authClient.signOut()
-    router.push(appPaths.auth.login.getHref())
+    await authClient.signOut();
+    router.push(appPaths.auth.login.getHref());
   }
 
   return (
@@ -77,15 +85,27 @@ export function UserMenu() {
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               <DropdownMenuGroup>
-                <DropdownMenuItem onClick={() => setTheme('light')}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setTheme("light");
+                  }}
+                >
                   <SunIcon />
                   Light
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('dark')}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setTheme("dark");
+                  }}
+                >
                   <MoonIcon />
                   Dark
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('system')}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setTheme("system");
+                  }}
+                >
                   <LaptopIcon />
                   System
                 </DropdownMenuItem>
@@ -110,5 +130,5 @@ export function UserMenu() {
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

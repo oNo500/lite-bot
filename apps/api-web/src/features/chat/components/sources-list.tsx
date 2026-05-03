@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
-import { Source, Sources, SourcesContent, SourcesTrigger } from '@/components/ai-elements/sources'
-import { appPaths } from '@/config/app-paths'
+import { Source, Sources, SourcesContent, SourcesTrigger } from "@/components/ai-elements/sources";
+import { appPaths } from "@/config/app-paths";
 
-import type { RetrievedChunk } from '@/features/rag/queries/types'
+import type { RetrievedChunk } from "@/features/rag/queries/types";
 
 interface SourcesListProps {
-  sources: RetrievedChunk[]
+  sources: RetrievedChunk[];
 }
 
 export function SourcesList({ sources }: SourcesListProps) {
-  if (sources.length === 0) return null
+  if (sources.length === 0) return null;
   return (
     <Sources>
       <SourcesTrigger count={sources.length} />
@@ -24,5 +24,5 @@ export function SourcesList({ sources }: SourcesListProps) {
         ))}
       </SourcesContent>
     </Sources>
-  )
+  );
 }

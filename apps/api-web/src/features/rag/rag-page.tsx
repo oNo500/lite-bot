@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { DocumentList } from './components/document-list'
-import { DocumentUpload } from './components/document-upload'
+import { DocumentList } from "./components/document-list";
+import { DocumentUpload } from "./components/document-upload";
 
 export function RagPage() {
   return (
@@ -24,5 +24,5 @@ export function RagPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

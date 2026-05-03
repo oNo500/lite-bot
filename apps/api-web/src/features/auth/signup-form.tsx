@@ -1,59 +1,56 @@
-'use client'
+"use client";
 
-import { Button } from '@workspace/ui/components/button'
+import { Button } from "@workspace/ui/components/button";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from '@workspace/ui/components/field'
-import { Input } from '@workspace/ui/components/input'
-import { cn } from '@workspace/ui/lib/utils'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+} from "@workspace/ui/components/field";
+import { Input } from "@workspace/ui/components/input";
+import { cn } from "@workspace/ui/lib/utils";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-import { Logo } from '@/components/logo'
-import { appPaths } from '@/config/app-paths'
-import { env } from '@/config/env'
-import { authClient } from '@/lib/auth-client'
+import { Logo } from "@/components/logo";
+import { appPaths } from "@/config/app-paths";
+import { env } from "@/config/env";
+import { authClient } from "@/lib/auth-client";
 
 function handleGitHubSignIn() {
-  void authClient.signIn.social({ provider: 'github' })
+  void authClient.signIn.social({ provider: "github" });
 }
 
-export function SignupForm({
-  className,
-  ...props
-}: React.ComponentProps<'div'>) {
-  const router = useRouter()
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+export function SignupForm({ className, ...props }: React.ComponentProps<"div">) {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const form = e.currentTarget
-    const name = (form.elements.namedItem('name') as HTMLInputElement).value
-    const email = (form.elements.namedItem('email') as HTMLInputElement).value
-    const password = (form.elements.namedItem('password') as HTMLInputElement).value
+    e.preventDefault();
+    const form = e.currentTarget;
+    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
 
-    setError(null)
-    setLoading(true)
+    setError(null);
+    setLoading(true);
 
-    const { error } = await authClient.signUp.email({ name, email, password })
+    const { error: signUpError } = await authClient.signUp.email({ name, email, password });
 
-    setLoading(false)
+    setLoading(false);
 
-    if (error) {
-      setError(error.message ?? 'Signup failed')
-      return
+    if (signUpError) {
+      setError(signUpError.message ?? "Signup failed");
+      return;
     }
 
-    router.push(appPaths.chat.index.href)
+    router.push(appPaths.chat.index.href);
   }
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       <form onSubmit={handleSubmit}>
         <FieldGroup>
           <div className="flex flex-col items-center gap-2 text-center">
@@ -69,46 +66,25 @@ export function SignupForm({
               {env.NEXT_PUBLIC_APP_NAME}
             </h1>
             <FieldDescription>
-              Already have an account?
-              {' '}
-              <a href={appPaths.auth.login.getHref()}>Sign in</a>
+              Already have an account? <a href={appPaths.auth.login.getHref()}>Sign in</a>
             </FieldDescription>
           </div>
           <Field>
             <FieldLabel htmlFor="name">Name</FieldLabel>
-            <Input
-              id="name"
-              name="name"
-              type="text"
-              placeholder="John Doe"
-              required
-            />
+            <Input id="name" name="name" type="text" placeholder="John Doe" required />
           </Field>
           <Field>
             <FieldLabel htmlFor="email">Email</FieldLabel>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="m@example.com"
-              required
-            />
+            <Input id="email" name="email" type="email" placeholder="m@example.com" required />
           </Field>
           <Field>
             <FieldLabel htmlFor="password">Password</FieldLabel>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              required
-            />
+            <Input id="password" name="password" type="password" required />
           </Field>
-          {error && (
-            <FieldDescription className="text-destructive">{error}</FieldDescription>
-          )}
+          {error && <FieldDescription className="text-destructive">{error}</FieldDescription>}
           <Field>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Creating account...' : 'Create Account'}
+              {loading ? "Creating account..." : "Create Account"}
             </Button>
           </Field>
           <FieldSeparator>Or</FieldSeparator>
@@ -126,15 +102,10 @@ export function SignupForm({
         </FieldGroup>
       </form>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our
-        {' '}
-        <a href={appPaths.legal.terms.href}>Terms of Service</a>
-        {' '}
-        and
-        {' '}
-        <a href={appPaths.legal.privacy.href}>Privacy Policy</a>
-        .
+        By clicking continue, you agree to our{" "}
+        <a href={appPaths.legal.terms.href}>Terms of Service</a> and{" "}
+        <a href={appPaths.legal.privacy.href}>Privacy Policy</a>.
       </FieldDescription>
     </div>
-  )
+  );
 }
