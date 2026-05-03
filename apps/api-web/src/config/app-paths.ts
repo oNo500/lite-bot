@@ -43,6 +43,9 @@ export const appPaths = {
       documents: { href: '/api/rag/documents' },
       document: { href: (id: string) => `/api/rag/documents/${id}` },
       ingest: { href: (id: string) => `/api/rag/ingest/${id}` },
+      documentChunks: { href: (id: string) => `/api/rag/documents/${id}/chunks` },
+      documentRechunk: { href: (id: string) => `/api/rag/documents/${id}/rechunk` },
+      chunk: { href: (id: string) => `/api/rag/chunks/${id}` },
     },
   },
 }
