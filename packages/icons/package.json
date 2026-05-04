@@ -11,12 +11,12 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "react": "^19.2.4"
+    "react": "^19.2.5"
   },
   "devDependencies": {
     "@svgr/cli": "^8.1.0",
     "@types/react": "^19.2.14",
-    "tsdown": "^0.21.4",
-    "typescript": "^5.9.3"
+    "tsdown": "^0.21.10",
+    "typescript": "^6.0.3"
   }
 }
