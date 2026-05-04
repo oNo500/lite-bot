@@ -6,9 +6,9 @@ import Link from "next/link";
 
 import { appPaths } from "@/config/app-paths";
 
-import { useDeleteDocument } from "../hooks/use-documents";
+import { useDeleteDocument } from "@/features/rag/hooks/use-documents";
 
-import type { DocumentStatus, RagDocument } from "../hooks/use-documents";
+import type { DocumentStatus, RagDocument } from "@/features/rag/hooks/use-documents";
 
 const STATUS_LABEL: Record<DocumentStatus, string> = {
   pending: "等待中",

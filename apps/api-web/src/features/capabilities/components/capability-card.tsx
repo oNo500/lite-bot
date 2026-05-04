@@ -1,7 +1,7 @@
 import { Badge } from "@workspace/ui/components/badge";
 import { BotIcon } from "lucide-react";
 
-import type { CapabilityInfo } from "../queries/get-flow-info";
+import type { CapabilityInfo } from "@/features/capabilities/queries/get-flow-info";
 
 interface CapabilityCardProps {
   info: CapabilityInfo;

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { runCapabilities } from "./run-capabilities";
 
-import type { ChatCapability, ChatContext } from "../types";
+import type { ChatCapability, ChatContext } from "@/features/chat/types";
 
 const baseCtx: ChatContext = {
   query: "hi",

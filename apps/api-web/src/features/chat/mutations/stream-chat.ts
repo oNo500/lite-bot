@@ -11,9 +11,9 @@ import { ensureChat, saveMessages } from "@/db/chat-queries";
 import { model as defaultModel } from "@/lib/ai/provider";
 import { createEventWriter } from "@/lib/ai/stream-events";
 
-import { runCapabilities } from "../lib/run-capabilities";
+import { runCapabilities } from "@/features/chat/lib/run-capabilities";
 
-import type { ChatFlow } from "../types";
+import type { ChatFlow } from "@/features/chat/types";
 import type { AppUIMessage } from "@/lib/ai/stream-events";
 import type { UIMessage } from "ai";
 

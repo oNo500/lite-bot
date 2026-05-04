@@ -1,4 +1,4 @@
-import type { CapabilityEntry, ChatContext } from "../types";
+import type { CapabilityEntry, ChatContext } from "@/features/chat/types";
 
 export async function runCapabilities(
   entries: CapabilityEntry[],
