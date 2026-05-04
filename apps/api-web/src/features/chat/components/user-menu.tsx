@@ -54,9 +54,10 @@ export function UserMenu() {
   const email = user?.email ?? "";
   const image = user?.image ?? "";
 
-  async function handleLogout() {
-    await authClient.signOut();
-    router.push(appPaths.auth.login.getHref());
+  function handleLogout() {
+    void authClient.signOut().then(() => {
+      router.push(appPaths.auth.login.getHref());
+    });
   }
 
   return (

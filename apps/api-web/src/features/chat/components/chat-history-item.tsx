@@ -75,7 +75,12 @@ export function ChatHistoryItem({ chat, onDelete }: ChatHistoryItemProps) {
           </DialogHeader>
           <DialogFooter>
             <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
-            <Button variant="destructive" onClick={handleConfirmDelete}>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                void handleConfirmDelete();
+              }}
+            >
               Delete
             </Button>
           </DialogFooter>

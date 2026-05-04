@@ -53,7 +53,9 @@ export function DocumentUpload() {
         isPending ? "pointer-events-none opacity-60" : "",
       ].join(" ")}
       onClick={() => inputRef.current?.click()}
-      onKeyDown={(e) => e.key === "Enter" && inputRef.current?.click()}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") inputRef.current?.click();
+      }}
       onDragOver={(e) => {
         e.preventDefault();
         setIsDragOver(true);
