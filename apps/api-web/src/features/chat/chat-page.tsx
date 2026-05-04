@@ -68,7 +68,9 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
         <PromptInputProvider>
           <ChatInput
             onSend={handleSend}
-            onStop={stop}
+            onStop={() => {
+              void stop();
+            }}
             status={status}
             ragEnabled={ragEnabled}
             onRagToggle={() => {
@@ -101,7 +103,9 @@ function ChatPageInner({ chatId, initialMessages }: ChatPageProps) {
         <div className="w-full max-w-190">
           <ChatInput
             onSend={handleSend}
-            onStop={stop}
+            onStop={() => {
+              void stop();
+            }}
             status={status}
             ragEnabled={ragEnabled}
             onRagToggle={() => {
