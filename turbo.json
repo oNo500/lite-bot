@@ -21,6 +21,13 @@
       "cache": false
     },
     "format:check": {},
+    "quality": {
+      "dependsOn": ["lint", "format:check"]
+    },
+    "quality:fix": {
+      "dependsOn": ["lint:fix", "format"],
+      "cache": false
+    },
     "dev": {
       "dependsOn": ["^build"],
       "persistent": true,

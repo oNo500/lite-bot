@@ -8,6 +8,8 @@
     "lint:fix": "turbo run lint:fix",
     "format": "turbo run format",
     "format:check": "turbo run format:check",
+    "quality": "turbo run quality",
+    "quality:fix": "turbo run quality:fix",
     "typecheck": "turbo run typecheck",
     "up:all": "taze -r"
   },
