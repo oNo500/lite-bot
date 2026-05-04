@@ -4,7 +4,7 @@ import { Skeleton } from "@workspace/ui/components/skeleton";
 import { FolderOpenIcon } from "lucide-react";
 
 import { DocumentItem } from "./document-item";
-import { useDocuments } from "../hooks/use-documents";
+import { useDocuments } from "@/features/rag/hooks/use-documents";
 
 export function DocumentList() {
   const { data: docs, isLoading, error } = useDocuments();

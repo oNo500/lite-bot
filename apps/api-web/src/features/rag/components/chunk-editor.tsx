@@ -33,9 +33,9 @@ import {
   useDocumentChunks,
   useRechunkDocument,
   useUpdateChunk,
-} from "../hooks/use-document-chunks";
+} from "@/features/rag/hooks/use-document-chunks";
 
-import type { ChunkListItem, DocumentChunksResult } from "../hooks/use-document-chunks";
+import type { ChunkListItem, DocumentChunksResult } from "@/features/rag/hooks/use-document-chunks";
 import type { ChunkConfig } from "@/lib/rag/types";
 
 interface ChunkEditorProps {

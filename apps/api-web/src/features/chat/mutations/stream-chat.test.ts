@@ -15,7 +15,7 @@ vi.mock("@/app/(chat)/api/chat/_lib/prepare-model-messages", () => ({
 
 import { streamChat } from "./stream-chat";
 
-import type { ChatFlow } from "../types";
+import type { ChatFlow } from "@/features/chat/types";
 import type * as AiModule from "ai";
 
 describe("streamChat", () => {

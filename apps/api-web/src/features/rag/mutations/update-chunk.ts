@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { ragChunk, ragDocument } from "@/db/schema";
 import { embedTexts } from "@/lib/rag/embed";
 
-import type { ChunkListItem } from "../queries/get-document-chunks";
+import type { ChunkListItem } from "@/features/rag/queries/get-document-chunks";
 
 export interface UpdateChunkPatch {
   enabled?: boolean;

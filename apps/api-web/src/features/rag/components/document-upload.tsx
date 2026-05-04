@@ -4,7 +4,7 @@ import { CloudUploadIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
-import { useUploadDocument } from "../hooks/use-documents";
+import { useUploadDocument } from "@/features/rag/hooks/use-documents";
 
 const ACCEPTED_TYPES = new Set([
   "text/plain",

@@ -16,15 +16,6 @@ export default defineConfig({
   ignorePatterns: [".agents/**", ".next/**", "src/components/ai-elements/**"],
   overrides: [
     {
-      // base() preset force-enables this for GLOB_SRC. Override in same scope to disable.
-      // Feature-internal relative imports (`../types`, `../hooks/...`) are the
-      // bulletproof-react convention; cross-feature imports use `@/` alias instead.
-      files: ["**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx}"],
-      rules: {
-        "import/no-relative-parent-imports": "off",
-      },
-    },
-    {
       files: ["**/*.test.ts", "**/*.test.tsx"],
       rules: {
         "vitest/no-conditional-in-test": "off",
